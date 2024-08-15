@@ -98,7 +98,7 @@ jobs:
           "https://github.com/TheRhysWyrill/RA-Xbox-Files/raw/main/DLLs.zip.001" --output DLLs.zip.001 
           "https://github.com/TheRhysWyrill/RA-Xbox-Files/raw/main/DLLs.zip.002" --output DLLs.zip.002 &&
           7z e Cores.7z -o"pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\" && 7z x Angle_Cores.zip -aoa -o"pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores" *.* -r -y && 7z x DLLs.zip.001 -o"pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64" *.* -r -y &&
-          del /q /f "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\.empty" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\.empty"
+          del /q /f "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\.empty" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\.empty" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\citra2018_libretro.dll" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\citra_libretro.dll"
         shell: cmd
       - name: Compile ANGLE build
         run: |
@@ -136,7 +136,7 @@ jobs:
           "https://github.com/TheRhysWyrill/RA-Xbox-Files/raw/main/DLLs.zip.001" --output DLLs.zip.001 
           "https://github.com/TheRhysWyrill/RA-Xbox-Files/raw/main/DLLs.zip.002" --output DLLs.zip.002 &&
           7z e Cores.7z -o"pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\" && 7z x DLLs.zip.001 -o"pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64" *.* -r -y &&
-          del /q /f "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\.empty" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\.empty"
+          del /q /f "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\.empty" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\.empty" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\citra2018_libretro.dll" "pkg\msvc-uwp\RetroArch-msvcUWP\cores\x64\cores\citra_libretro.dll"
         shell: cmd
       - name: Compile Mesa build
         run: |
