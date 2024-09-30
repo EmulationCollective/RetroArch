@@ -395,6 +395,9 @@ void runloop_log_counters(
 
 static void runloop_perf_log(void)
 {
+   if (!runloop_state.perfcnt_enable)
+      return;
+
    RARCH_LOG("[PERF]: Performance counters (libretro):\n");
    runloop_log_counters(runloop_state.perf_counters_libretro,
          runloop_state.perf_ptr_libretro);
@@ -2636,6 +2639,17 @@ bool runloop_environment_cb(unsigned cmd, void *data)
          *dir = *dir_playlist ? dir_playlist : NULL;
          RARCH_LOG("[Environ]: PLAYLIST_DIRECTORY: \"%s\".\n",
                dir_playlist);
+         break;
+      }
+
+      case RETRO_ENVIRONMENT_GET_FILE_BROWSER_START_DIRECTORY:
+      {
+         const char **dir            = (const char**)data;
+         const char *dir_content     = settings->paths.directory_menu_content;
+
+         *dir = *dir_content ? dir_content : NULL;
+         RARCH_LOG("[Environ]: FILE_BROWSER_START_DIRECTORY: \"%s\".\n",
+               dir_content);
          break;
       }
 
@@ -6415,16 +6429,14 @@ static enum runloop_state_enum runloop_check_state(
             current_bits, RARCH_FAST_FORWARD_KEY);
       bool new_hold_button_state              = BIT256_GET(
             current_bits, RARCH_FAST_FORWARD_HOLD_KEY);
-      bool check2                             = new_button_state
-         && !old_button_state;
+      bool check2                             = new_button_state && !old_button_state;
 
       if (!check2)
          check2 = old_hold_button_state != new_hold_button_state;
 
       /* Don't allow fastmotion while paused */
-      if (runloop_paused)
+      if (check2 && runloop_paused)
       {
-         check2                = true;
          new_button_state      = false;
          new_hold_button_state = false;
          input_st->flags      |= INP_FLAG_NONBLOCKING;

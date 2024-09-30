@@ -736,7 +736,7 @@ bool video_driver_translate_coord_viewport(
    return true;
 }
 
-void video_monitor_compute_fps_statistics(uint64_t
+static void video_monitor_compute_fps_statistics(uint64_t
       frame_time_count)
 {
    double        avg_fps       = 0.0;
@@ -1081,7 +1081,13 @@ const char *video_display_server_get_ident(void)
 void* video_display_server_init(enum rarch_display_type type)
 {
    video_driver_state_t *video_st = &video_driver_st;
-   video_display_server_destroy();
+   runloop_state_t *runloop_st    = runloop_state_get_ptr();
+
+   /* Reuse when already and still running */
+   if (current_display_server && runloop_st->flags & RUNLOOP_FLAG_IS_INITED)
+      return video_st->current_display_server_data;
+   else
+      video_display_server_destroy();
 
    switch (type)
    {
@@ -1217,7 +1223,7 @@ bool video_display_server_has_refresh_rate(float hz)
       {
          /* Float difference added to enable 49.95Hz modelines for PAL. *
           * Actual mode selection will be done in context driver,       *
-          * with some logic in video_switch_refresh_rate_maybe          *   
+          * with some logic in video_switch_refresh_rate_maybe          *
           * and in action_cb_push_dropdown_item_resolution              */
          if (   (video_list[i].width        == video_driver_width)
              && (video_list[i].height       == video_driver_height)
@@ -2056,7 +2062,7 @@ void video_viewport_get_scaled_aspect2(struct video_viewport *vp, unsigned viewp
    settings_t *settings     = config_get_ptr();
    int x                    = 0;
    int y                    = 0;
-   
+
    float viewport_bias_x    = settings->floats.video_viewport_bias_x;
    float viewport_bias_y    = settings->floats.video_viewport_bias_y;
 #if defined(RARCH_MOBILE)
@@ -2348,12 +2354,8 @@ void video_viewport_get_scaled_integer(struct video_viewport *vp,
    int padding_y                   = 0;
    float viewport_bias_x           = settings->floats.video_viewport_bias_x;
    float viewport_bias_y           = settings->floats.video_viewport_bias_y;
-   /* Use system reported sizes as these define the
-    * geometry for the "normal" case. */
-   unsigned content_width          =
-      video_st->av_info.geometry.base_width;
-   unsigned content_height         =
-      video_st->av_info.geometry.base_height;
+   unsigned content_width          = video_st->frame_cache_width;
+   unsigned content_height         = video_st->frame_cache_height;
    unsigned int rotation           = retroarch_get_rotation();
 #if defined(RARCH_MOBILE)
    if (width < height)
@@ -2367,7 +2369,7 @@ void video_viewport_get_scaled_integer(struct video_viewport *vp,
       viewport_bias_y = 1.0 - viewport_bias_y;
 
    if (rotation % 2)
-      content_height     = video_st->av_info.geometry.base_width;
+      content_height  = content_width;
 
    if (content_height == 0)
       content_height     = 1;
@@ -2709,17 +2711,18 @@ void video_driver_build_info(video_frame_info_t *video_info)
    video_info->runloop_is_paused           = (runloop_st->flags & RUNLOOP_FLAG_PAUSED) ? true : false;
    video_info->runloop_is_slowmotion       = (runloop_st->flags & RUNLOOP_FLAG_SLOWMOTION) ? true : false;
    video_info->fastforward_frameskip       = settings->bools.fastforward_frameskip;
+   video_info->frame_time_target           = 1000000.0f / video_info->refresh_rate;
 
 #ifdef _WIN32
 #ifdef HAVE_VULKAN
    /* Vulkan in Windows does mailbox emulation
     * in fullscreen with vsync, effectively
-    * discarding frames that can't be shown,
-    * therefore do not do it twice. */
+    * already discarding frames, therefore compensate
+    * frameskip target to make it smoother and faster. */
    if (     video_info->fullscreen
          && settings->bools.video_vsync
          && string_is_equal(video_driver_get_ident(), "vulkan"))
-      video_info->fastforward_frameskip    = false;
+      video_info->frame_time_target       /= 2.0f;
 #endif
 #endif
 
@@ -3278,6 +3281,7 @@ bool video_driver_init_internal(bool *video_is_threaded, bool verbosity_enabled)
       video_st->flags |=  VIDEO_FLAG_STARTED_FULLSCREEN;
    else
       video_st->flags &= ~VIDEO_FLAG_STARTED_FULLSCREEN;
+
    /* Reset video frame count */
    video_st->frame_count             = 0;
    video_st->frame_drop_count        = 0;
@@ -3409,9 +3413,9 @@ void video_driver_frame(const void *data, unsigned width,
    static retro_time_t last_time;
    static retro_time_t curr_time;
    static retro_time_t fps_time;
-   static retro_time_t frame_time_accumulator;
    static float last_fps, frame_time;
    static uint64_t last_used_memory, last_total_memory;
+   static uint16_t frame_time_accumulator;
    /* Mark the start of nonblock state for
     * ignoring initial previous frame time */
    static int8_t nonblock_active;
@@ -3494,9 +3498,9 @@ void video_driver_frame(const void *data, unsigned width,
        && video_info.fastforward_frameskip)
 #endif
    {
-      retro_time_t frame_time_accumulator_prev = frame_time_accumulator;
-      retro_time_t frame_time_delta            = new_time - last_time;
-      retro_time_t frame_time_target           = 1000000.0f / video_info.refresh_rate;
+      uint16_t frame_time_accumulator_prev = frame_time_accumulator;
+      uint16_t frame_time_delta            = new_time - last_time;
+      uint16_t frame_time_target           = video_info.frame_time_target;
 
       /* Ignore initial previous frame time
        * to prevent rubber band startup */
@@ -3931,7 +3935,8 @@ void video_driver_frame(const void *data, unsigned width,
             sizeof(video_info.stat_text),
             "CORE AV_INFO\n"
             " Size:        %u x %u\n"
-            " Max Size:    %u x %u\n"
+            " - Base:      %u x %u\n"
+            " - Max:       %u x %u\n"
             " Aspect:      %3.3f\n"
             " FPS:         %3.2f\n"
             " Sample Rate: %6.2f\n"
@@ -3950,6 +3955,8 @@ void video_driver_frame(const void *data, unsigned width,
             " Blocking:    %5.2f %%\n"
             " Samples:  %8d\n"
             "%s",
+            video_st->frame_cache_width,
+            video_st->frame_cache_height,
             av_info->geometry.base_width,
             av_info->geometry.base_height,
             av_info->geometry.max_width,
@@ -4113,6 +4120,7 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
       uint8_t *skip_update,
       uint8_t *video_frame_delay_effective)
 {
+   retro_time_t time_now         = cpu_features_get_time_usec();
    static retro_time_t time_prev = 0;
    retro_time_t core_run_time    = (runloop_st->core_run_time) ? runloop_st->core_run_time : 500;
    static int16_t frame_time_dev = 0;
@@ -4142,8 +4150,8 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
       overtime_count = 0;
 
    /* Calibration levels */
-   frame_time                    = cpu_features_get_time_usec() - time_prev;
-   time_prev                     = cpu_features_get_time_usec();
+   frame_time                    = (*skip_update) ? frame_time_target : time_now - time_prev;
+   time_prev                     = time_now;
    frame_time_over               = frame_time > frame_time_target * 1.75f || core_run_time >= frame_time_target;
    frame_time_near               = abs(frame_time - frame_time_target) < frame_time_target * 0.125f;
 
@@ -4152,8 +4160,11 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
       *skip_update = frame_time_interval;
 
    /* No increasing allowed unless safe */
-   if (!frame_time_near && frame_delay_cur)
+   if (!frame_time_near)
       hold_count += (frame_time > frame_time_target) ? 2 : 1;
+
+   if (frame_time_over)
+      hold_count += frame_time_interval;
 
    /* Overflow looping */
    if (hold_count > refresh_rate * 3)
@@ -4173,7 +4184,7 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
    if (!overtime_count)
       frame_time_dev += frame_time - frame_time_target;
 
-   /* Increase reserve when doing over time */
+   /* Increase reserve when doing overtime */
    if (frame_time_over && frame_delay_cur)
    {
       if (     core_run_time >= frame_time_target
@@ -4201,11 +4212,7 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
       video_st->frame_time_reserve = (frame_time_target / 1000) * 1000;
 
    /* New delay */
-   frame_delay_new = (frame_time_target - MAX(video_st->frame_time_reserve, core_run_time)) / 1000;
-
-   /* Limit by target */
-   if (frame_delay_new > video_st->frame_delay_target)
-      frame_delay_new = video_st->frame_delay_target;
+   frame_delay_new = (frame_time_target - core_run_time - video_st->frame_time_reserve) / 1000;
 
    /* Previous frame time excess compensation */
    if (     video_st->frame_count > refresh_rate
@@ -4214,9 +4221,12 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
          && frame_delay_cur
          && frame_delay_new
          && frame_time > frame_time_target
+         && (abs(frame_time - frame_time_target) >= 1000)
          && !*skip_update)
    {
-      frame_delay_new = frame_delay_cur - ((frame_time - frame_time_target) / 1000);
+      int delay_delta = ceil((frame_time - frame_time_target) / 1000.0f);
+      *skip_update = frame_time_interval;
+      frame_delay_new -= delay_delta;
       if (frame_delay_new < 0)
          frame_delay_new = 0;
    }
@@ -4262,8 +4272,8 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
    /* Make sure leftover never goes below reserve */
    if (     frame_delay_cur
          && frame_delay_new
-         && core_run_time <= video_st->frame_delay_target * 1000
-         && frame_time_target - core_run_time - (frame_delay_new * 1000) < video_st->frame_time_reserve)
+         && frame_time_target - core_run_time - (frame_delay_new * 1000) < video_st->frame_time_reserve
+      )
    {
       frame_delay_new--;
       if (frame_delay_cur != frame_delay_new)
@@ -4272,8 +4282,13 @@ static void video_frame_delay_leftover(video_driver_state_t *video_st,
 
    /* Decrease hold faster if there is enough leftover */
    if (     hold_count
+         && !frame_time_over
          && frame_time_target - core_run_time - (frame_delay_new * 1000) > video_st->frame_time_reserve + core_run_time)
       hold_count--;
+
+   /* Limit by target */
+   if (frame_delay_new > video_st->frame_delay_target)
+      frame_delay_new = video_st->frame_delay_target;
 
    /* Reset cumulative frame time deviation count */
    if (frame_time_over || frame_delay_new != frame_delay_cur || abs(frame_time_dev) > 1000)

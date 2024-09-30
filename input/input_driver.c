@@ -5685,11 +5685,11 @@ void bsv_movie_frame_rewind(void)
 
    handle->did_rewind = true;
 
-   if (     (handle->frame_ptr <= 1)
+   if (     ( (handle->frame_counter & handle->frame_mask) <= 1)
          && (handle->frame_pos[0] == handle->min_file_pos))
    {
       /* If we're at the beginning... */
-      handle->frame_ptr = 0;
+      handle->frame_counter = 0;
       intfstream_seek(handle->file, (int)handle->min_file_pos, SEEK_SET);
       if (recording)
          intfstream_truncate(handle->file, (int)handle->min_file_pos);
@@ -5702,11 +5702,14 @@ void bsv_movie_frame_rewind(void)
        *
        * Sucessively rewinding frames, we need to rewind past the read data,
        * plus another. */
-      handle->frame_ptr = (handle->frame_ptr -
-            (handle->first_rewind ? 1 : 2)) & handle->frame_mask;
-      intfstream_seek(handle->file, (int)handle->frame_pos[handle->frame_ptr], SEEK_SET);
+      uint8_t delta = handle->first_rewind ? 1 : 2;
+      if (handle->frame_counter >= delta)
+         handle->frame_counter -= delta;
+      else
+         handle->frame_counter = 0;
+      intfstream_seek(handle->file, (int)handle->frame_pos[handle->frame_counter & handle->frame_mask], SEEK_SET);
       if (recording)
-         intfstream_truncate(handle->file, (int)handle->frame_pos[handle->frame_ptr]);
+         intfstream_truncate(handle->file, (int)handle->frame_pos[handle->frame_counter & handle->frame_mask]);
    }
 
    if (intfstream_tell(handle->file) <= (long)handle->min_file_pos)
@@ -5758,7 +5761,7 @@ void bsv_movie_finish_rewind(input_driver_state_t *input_st)
    bsv_movie_t *handle  = input_st->bsv_movie_state_handle;
    if (!handle)
       return;
-   handle->frame_ptr    = (handle->frame_ptr + 1) & handle->frame_mask;
+   handle->frame_counter += 1;
    handle->first_rewind = !handle->did_rewind;
    handle->did_rewind   = false;
 }
@@ -5797,7 +5800,7 @@ void bsv_movie_next_frame(input_driver_state_t *input_st)
       bsv_movie_handle_clear_key_events(handle);
 
       /* Maybe record checkpoint */
-      if (checkpoint_interval != 0 && handle->frame_ptr > 0 && (handle->frame_ptr % (checkpoint_interval*60) == 0))
+      if (checkpoint_interval != 0 && handle->frame_counter > 0 && (handle->frame_counter % (checkpoint_interval*60) == 0))
       {
          retro_ctx_serialize_info_t serial_info;
          uint8_t frame_tok = REPLAY_TOKEN_CHECKPOINT_FRAME;
@@ -5893,7 +5896,7 @@ void bsv_movie_next_frame(input_driver_state_t *input_st)
         }
       }
    }
-   handle->frame_pos[handle->frame_ptr] = intfstream_tell(handle->file);
+   handle->frame_pos[handle->frame_counter & handle->frame_mask] = intfstream_tell(handle->file);
 }
 
 size_t replay_get_serialize_size(void)
@@ -6824,7 +6827,7 @@ void input_driver_collect_system_input(input_driver_state_t *input_st,
             (general_binds)[k].orig_joyaxis = (general_binds)[k].joyaxis;
          }
 
-         /* Read input from both analog sticks. */
+         /* Read input from analog sticks according to settings. */
          for (s = RETRO_DEVICE_INDEX_ANALOG_LEFT; s <= RETRO_DEVICE_INDEX_ANALOG_RIGHT; s++)
          {
             unsigned x_plus  = RARCH_ANALOG_LEFT_X_PLUS;
@@ -6832,6 +6835,9 @@ void input_driver_collect_system_input(input_driver_state_t *input_st,
             unsigned x_minus = RARCH_ANALOG_LEFT_X_MINUS;
             unsigned y_minus = RARCH_ANALOG_LEFT_Y_MINUS;
 
+            if ((settings->bools.menu_disable_left_analog  && s == RETRO_DEVICE_INDEX_ANALOG_LEFT ) ||
+                (settings->bools.menu_disable_right_analog && s == RETRO_DEVICE_INDEX_ANALOG_RIGHT))
+                continue;
             if (s == RETRO_DEVICE_INDEX_ANALOG_RIGHT)
             {
                x_plus  = RARCH_ANALOG_RIGHT_X_PLUS;

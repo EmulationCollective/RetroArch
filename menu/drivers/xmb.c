@@ -434,11 +434,9 @@ typedef struct xmb_handle
    char entry_index_offset;
 
    /* These have to be huge, because runloop_st->name.savestate
-    * has a hard-coded size of 8192...
-    * (the extra space here is required to silence compiler
-    * warnings...) */
-   char savestate_thumbnail_file_path[8204]; /* TODO/FIXME - check size */
-   char prev_savestate_thumbnail_file_path[8204]; /* TODO/FIXME - check size */
+    * has a hard-coded size of (PATH_MAX_LENGTH * 2)... */
+   char savestate_thumbnail_file_path[PATH_MAX_LENGTH * 2];
+   char prev_savestate_thumbnail_file_path[PATH_MAX_LENGTH * 2];
    char fullscreen_thumbnail_label[NAME_MAX_LENGTH];
 
    bool allow_horizontal_animation;
@@ -1264,7 +1262,7 @@ static void xmb_update_savestate_thumbnail_path(void *data, unsigned i)
              || string_is_equal(entry.label, "savestate"))
          {
             size_t _len;
-            char path[8204]; /* TODO/FIXME - check size */
+            char path[PATH_MAX_LENGTH * 2];
             runloop_state_t *runloop_st = runloop_state_get_ptr();
 
             /* State slot dropdown */
@@ -1662,6 +1660,7 @@ static void xmb_selection_pointer_changed(
          if (xmb->entry_idx_enabled)
          {
             size_t entry_idx_selection = selection + 1;
+            size_t list_size           = MENU_LIST_GET_SELECTION(menu_list, 0)->size;
             unsigned entry_idx_offset  = xmb->entry_index_offset;
             bool show_entry_idx        = (xmb->is_playlist || xmb->is_explore_list) ? true : false;
 
@@ -1678,7 +1677,7 @@ static void xmb_selection_pointer_changed(
             else
                snprintf(xmb->entry_index_str, sizeof(xmb->entry_index_str),
                      "%lu/%lu", (unsigned long)entry_idx_selection,
-                                (unsigned long)xmb->list_size);
+                                (unsigned long)list_size);
          }
 
          ia                      = xmb->items_active_alpha;
@@ -2958,9 +2957,14 @@ static void xmb_populate_entries(void *data,
 
    xmb_set_title(xmb);
 
-   if(xmb->is_playlist && settings->uints.menu_icon_thumbnails)
+   if(xmb->is_playlist)
    {
-      xmb_populate_dynamic_icons(xmb);
+      if(settings->uints.menu_icon_thumbnails)
+         xmb_populate_dynamic_icons(xmb);
+   }
+   else if(xmb->thumbnails.pending_icons != XMB_PENDING_THUMBNAIL_NONE )
+   {
+      xmb_unload_icon_thumbnail_textures(xmb);
    }
 
    if (xmb->allow_dynamic_wallpaper)

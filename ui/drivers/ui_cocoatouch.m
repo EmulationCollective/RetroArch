@@ -51,6 +51,11 @@
 #import <GameController/GCMouse.h>
 #endif
 
+#ifdef HAVE_SDL2
+#define SDL_MAIN_HANDLED
+#include "SDL.h"
+#endif
+
 #if defined(HAVE_COCOA_METAL) || defined(HAVE_COCOATOUCH)
 #import "JITSupport.h"
 id<ApplePlatform> apple_platform;
@@ -202,6 +207,11 @@ void get_ios_version(int *major, int *minor)
       });
    if (major) *major = savedMajor;
    if (minor) *minor = savedMinor;
+}
+
+bool ios_running_on_ipad(void)
+{
+   return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
 
 /* Input helpers: This is kept here because it needs ObjC */
@@ -557,6 +567,9 @@ enum
 #ifdef HAVE_COCOA_METAL
        case APPLE_VIEW_TYPE_VULKAN:
          _renderView = [MetalLayerView new];
+#if TARGET_OS_IOS
+         _renderView.multipleTouchEnabled = YES;
+#endif
          break;
        case APPLE_VIEW_TYPE_METAL:
          {
@@ -712,7 +725,8 @@ enum
 #endif
 
 #if TARGET_OS_IOS
-   [MXMetricManager.sharedManager addSubscriber:self];
+   if (@available(iOS 13.0, *))
+      [MXMetricManager.sharedManager addSubscriber:self];
 #endif
 
 #ifdef HAVE_MFI
@@ -747,6 +761,7 @@ enum
    update_topshelf();
 #endif
    rarch_stop_draw_observer();
+   command_event(CMD_EVENT_SAVE_FILES, NULL);
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application
@@ -889,7 +904,7 @@ enum
 - (void)supportOtherAudioSessions { }
 
 #if TARGET_OS_IOS
-- (void)didReceiveMetricPayloads:(NSArray<MXMetricPayload *> *)payloads
+- (void)didReceiveMetricPayloads:(NSArray<MXMetricPayload *> *)payloads API_AVAILABLE(ios(13.0))
 {
     for (MXMetricPayload *payload in payloads)
     {
@@ -963,6 +978,9 @@ int main(int argc, char *argv[])
         RARCH_LOG("Ptrace hack complete, JIT support is enabled.\n");
     else
         RARCH_WARN("Ptrace hack NOT available; Please use an app like Jitterbug.\n");
+#endif
+#ifdef HAVE_SDL2
+    SDL_SetMainReady();
 #endif
    @autoreleasepool {
       return UIApplicationMain(argc, argv, NSStringFromClass([RApplication class]), NSStringFromClass([RetroArch_iOS class]));

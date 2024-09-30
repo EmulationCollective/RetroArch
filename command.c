@@ -408,12 +408,15 @@ bool command_get_config_param(command_t *cmd, const char* arg)
       input_driver_state_t *input_st = input_state_get_ptr();
       value            = value_dynamic;
       value_dynamic[0] = '\0';
-      if(input_st->bsv_movie_state_handle)
-         snprintf(value_dynamic, sizeof(value_dynamic), "%lld %u",
-               (long long)(input_st->bsv_movie_state_handle->identifier),
-               input_st->bsv_movie_state.flags);
+      if(input_st->bsv_movie_state_handle) {
+         bsv_movie_t *movie = input_st->bsv_movie_state_handle;
+         snprintf(value_dynamic, sizeof(value_dynamic), "%lld %u %lld",
+               (long long)(movie->identifier),
+                  input_st->bsv_movie_state.flags,
+                  (long long)(movie->frame_counter));
+      }
       else
-         strlcpy(value_dynamic, "0 0", sizeof(value_dynamic));
+         strlcpy(value_dynamic, "0 0 0", sizeof(value_dynamic));
    }
    #endif
    /* TODO: query any string */
@@ -1534,7 +1537,7 @@ static void scan_states(settings_t *settings,
       {
          /* Gap index: lowest free slot in the wraparound range */
          if (gap_idx == UINT_MAX)
-            gap_idx = i;
+            gap_idx = (unsigned)i;
       }
       /* Occupied save slots */
       else
@@ -1543,7 +1546,7 @@ static void scan_states(settings_t *settings,
             after gap index */
          if (gap_idx <  UINT_MAX &&
              del_idx == UINT_MAX)
-            del_idx = i;
+            del_idx = (unsigned)i;
       }
    }
 

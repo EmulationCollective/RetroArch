@@ -603,6 +603,8 @@ DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_content_favorites_size,        MENU_
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_menu_input_unified_controls,   MENU_ENUM_SUBLABEL_INPUT_UNIFIED_MENU_CONTROLS)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_menu_input_disable_info_button,     MENU_ENUM_SUBLABEL_INPUT_DISABLE_INFO_BUTTON)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_menu_input_disable_search_button,   MENU_ENUM_SUBLABEL_INPUT_DISABLE_SEARCH_BUTTON)
+DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_menu_input_disable_left_analog_in_menu,  MENU_ENUM_SUBLABEL_INPUT_DISABLE_LEFT_ANALOG_IN_MENU)
+DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_menu_input_disable_right_analog_in_menu, MENU_ENUM_SUBLABEL_INPUT_DISABLE_RIGHT_ANALOG_IN_MENU)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_quit_press_twice,              MENU_ENUM_SUBLABEL_QUIT_PRESS_TWICE)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_onscreen_notifications_enable, MENU_ENUM_SUBLABEL_VIDEO_FONT_ENABLE)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_video_crop_overscan,           MENU_ENUM_SUBLABEL_VIDEO_CROP_OVERSCAN)
@@ -801,6 +803,7 @@ DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_autosave_interval,             MENU_
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_replay_max_keep,               MENU_ENUM_SUBLABEL_REPLAY_MAX_KEEP)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_replay_checkpoint_interval,    MENU_ENUM_SUBLABEL_REPLAY_CHECKPOINT_INTERVAL)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_input_remap_binds_enable,      MENU_ENUM_SUBLABEL_INPUT_REMAP_BINDS_ENABLE)
+DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_input_remap_sort_by_controller_enable,      MENU_ENUM_SUBLABEL_INPUT_REMAP_SORT_BY_CONTROLLER_ENABLE)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_input_autodetect_enable,       MENU_ENUM_SUBLABEL_INPUT_AUTODETECT_ENABLE)
 #if defined(HAVE_DINPUT) || defined(HAVE_WINRAWINPUT)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_input_nowinkey_enable,         MENU_ENUM_SUBLABEL_INPUT_NOWINKEY_ENABLE)
@@ -1399,7 +1402,7 @@ static int action_bind_sublabel_systeminfo_controller_entry(
       const char *label, const char *path,
       char *s, size_t len)
 {
-   char tmp[4096];
+   char tmp[NAME_MAX_LENGTH];
    unsigned controller;
    const char *val_port_dev_name =
       msg_hash_to_str(MENU_ENUM_LABEL_VALUE_PORT_DEVICE_NAME);
@@ -1530,7 +1533,7 @@ static int action_bind_sublabel_subsystem_load(
       char *s, size_t len)
 {
    unsigned j = 0;
-   char buf[4096];
+   char buf[PATH_MAX_LENGTH];
 
    buf[0] = '\0';
 
@@ -1731,7 +1734,7 @@ static int action_bind_sublabel_netplay_room(file_list_t *list,
       char *s, size_t len)
 {
    size_t _len;
-   char buf[512];
+   char buf[NAME_MAX_LENGTH];
    struct netplay_room *room;
    net_driver_state_t *net_st = networking_state_get_ptr();
    unsigned room_index        = type - MENU_SETTINGS_NETPLAY_ROOMS_START;
@@ -1785,7 +1788,7 @@ static int action_bind_sublabel_netplay_kick_client(file_list_t *list,
       const char *label, const char *path,
       char *s, size_t len)
 {
-   char buf[512];
+   char buf[NAME_MAX_LENGTH];
    netplay_client_info_t *client;
    const char         *status = NULL;
    size_t             idx     = list->list[i].entry_idx;
@@ -3992,6 +3995,9 @@ int menu_cbs_init_bind_sublabel(menu_file_list_cbs_t *cbs,
          case MENU_ENUM_LABEL_INPUT_REMAP_BINDS_ENABLE:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_input_remap_binds_enable);
             break;
+         case MENU_ENUM_LABEL_INPUT_REMAP_SORT_BY_CONTROLLER_ENABLE:
+            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_input_remap_sort_by_controller_enable);
+            break;
          case MENU_ENUM_LABEL_AUTOSAVE_INTERVAL:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_autosave_interval);
             break;
@@ -4513,6 +4519,12 @@ int menu_cbs_init_bind_sublabel(menu_file_list_cbs_t *cbs,
             break;
          case MENU_ENUM_LABEL_INPUT_DISABLE_SEARCH_BUTTON:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_menu_input_disable_search_button);
+            break;
+         case MENU_ENUM_LABEL_INPUT_DISABLE_LEFT_ANALOG_IN_MENU:
+            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_menu_input_disable_left_analog_in_menu);
+            break;
+         case MENU_ENUM_LABEL_INPUT_DISABLE_RIGHT_ANALOG_IN_MENU:
+            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_menu_input_disable_right_analog_in_menu);
             break;
          case MENU_ENUM_LABEL_QUIT_PRESS_TWICE:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_quit_press_twice);

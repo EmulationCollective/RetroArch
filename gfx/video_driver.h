@@ -456,6 +456,8 @@ typedef struct video_frame_info
    uint32_t video_st_flags;
    uint16_t menu_st_flags;
 
+   uint16_t frame_time_target;
+
    char stat_text[1024];
 
    bool widgets_active;
@@ -1041,14 +1043,6 @@ void video_viewport_get_scaled_aspect2(struct video_viewport *vp,
  * Sets monitor refresh rate to new value.
  **/
 void video_monitor_set_refresh_rate(float hz);
-
-/**
- * video_monitor_compute_fps_statistics:
- *
- * Computes monitor FPS statistics.
- **/
-void video_monitor_compute_fps_statistics(uint64_t
-      frame_time_count);
 
 /**
  * video_monitor_fps_statistics

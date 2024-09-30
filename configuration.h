@@ -680,6 +680,7 @@ typedef struct settings
 
       /* Input */
       bool input_remap_binds_enable;
+      bool input_remap_sort_by_controller_enable;
       bool input_autodetect_enable;
       bool input_sensors_enable;
       bool input_overlay_enable;
@@ -826,6 +827,8 @@ typedef struct settings
       bool menu_unified_controls;
       bool menu_disable_info_button;
       bool menu_disable_search_button;
+      bool menu_disable_left_analog;
+      bool menu_disable_right_analog;
       bool menu_ticker_smooth;
       bool settings_show_drivers;
       bool settings_show_video;

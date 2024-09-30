@@ -4314,9 +4314,9 @@ static unsigned menu_displaylist_parse_playlists(
 #if defined(HAVE_LIBRETRODB)
    if (settings->bools.menu_content_show_explore)
    {
-      char label[512];
-      size_t _len = strlcpy(label, msg_hash_to_str(MENU_ENUM_LABEL_EXPLORE_VIEW),
-            sizeof(label));
+      char lbl[NAME_MAX_LENGTH];
+      size_t _len = strlcpy(lbl, msg_hash_to_str(MENU_ENUM_LABEL_EXPLORE_VIEW),
+            sizeof(lbl));
 
       /* List any custom explore views above playlists */
       for (i = 0; i < list_size; i++)
@@ -4327,9 +4327,9 @@ static unsigned menu_displaylist_parse_playlists(
          if (!string_is_equal_noncase(fext, "lvw"))
             continue;
 
-         snprintf(label + _len, sizeof(label) - _len, ": %.*s",
+         snprintf(lbl + _len, sizeof(lbl) - _len, ": %.*s",
                (int)(fext - 1 - fname), fname);
-         if (menu_entries_append(info_list, label, path,
+         if (menu_entries_append(info_list, lbl, path,
                MENU_ENUM_LABEL_GOTO_EXPLORE,
                MENU_EXPLORE_TAB, 0, (count - content_count), NULL))
          {
@@ -4912,7 +4912,7 @@ static unsigned menu_displaylist_parse_pl_thumbnail_download_list(
 static unsigned menu_displaylist_parse_content_information(
       menu_handle_t *menu, settings_t *settings, file_list_t *info_list)
 {
-   char tmp[8192];
+   char tmp[PATH_MAX_LENGTH];
    char core_name[NAME_MAX_LENGTH];
    char content_label[NAME_MAX_LENGTH];
    playlist_t *playlist                = playlist_get_cached();
@@ -7925,14 +7925,16 @@ unsigned menu_displaylist_build_list(
       case DISPLAYLIST_INPUT_MENU_SETTINGS_LIST:
          {
             menu_displaylist_build_info_selective_t build_list[] = {
-               {MENU_ENUM_LABEL_INPUT_UNIFIED_MENU_CONTROLS,       PARSE_ONLY_BOOL,     true  },
-               {MENU_ENUM_LABEL_MENU_INPUT_SWAP_OK_CANCEL,         PARSE_ONLY_BOOL,     true  },
-               {MENU_ENUM_LABEL_MENU_INPUT_SWAP_SCROLL,            PARSE_ONLY_BOOL,     true  },
-               {MENU_ENUM_LABEL_INPUT_ALL_USERS_CONTROL_MENU,      PARSE_ONLY_BOOL,     true  },
-               {MENU_ENUM_LABEL_MENU_SCROLL_FAST,                  PARSE_ONLY_BOOL,     true  },
-               {MENU_ENUM_LABEL_MENU_SCROLL_DELAY,                 PARSE_ONLY_UINT,     true  },
-               {MENU_ENUM_LABEL_INPUT_DISABLE_INFO_BUTTON,         PARSE_ONLY_BOOL,     true  },
-               {MENU_ENUM_LABEL_INPUT_DISABLE_SEARCH_BUTTON,       PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_INPUT_UNIFIED_MENU_CONTROLS,        PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_MENU_INPUT_SWAP_OK_CANCEL,          PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_MENU_INPUT_SWAP_SCROLL,             PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_INPUT_ALL_USERS_CONTROL_MENU,       PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_MENU_SCROLL_FAST,                   PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_MENU_SCROLL_DELAY,                  PARSE_ONLY_UINT,     true  },
+               {MENU_ENUM_LABEL_INPUT_DISABLE_INFO_BUTTON,          PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_INPUT_DISABLE_SEARCH_BUTTON,        PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_INPUT_DISABLE_LEFT_ANALOG_IN_MENU,  PARSE_ONLY_BOOL,     true  },
+               {MENU_ENUM_LABEL_INPUT_DISABLE_RIGHT_ANALOG_IN_MENU, PARSE_ONLY_BOOL,     true  },
             };
 
             for (i = 0; i < ARRAY_SIZE(build_list); i++)
@@ -7958,6 +7960,7 @@ unsigned menu_displaylist_build_list(
                {MENU_ENUM_LABEL_INPUT_MAX_USERS,                                                   PARSE_ONLY_UINT,  true  },
                {MENU_ENUM_LABEL_INPUT_AUTODETECT_ENABLE,                                           PARSE_ONLY_BOOL,  true  },
                {MENU_ENUM_LABEL_INPUT_REMAP_BINDS_ENABLE,                                          PARSE_ONLY_BOOL,  true  },
+               {MENU_ENUM_LABEL_INPUT_REMAP_SORT_BY_CONTROLLER_ENABLE,                             PARSE_ONLY_BOOL,  true  },
                {MENU_ENUM_LABEL_INPUT_POLL_TYPE_BEHAVIOR,                                          PARSE_ONLY_UINT,  true  },
                {MENU_ENUM_LABEL_INPUT_ICADE_ENABLE,                                                PARSE_ONLY_BOOL,  true  },
                {MENU_ENUM_LABEL_INPUT_SMALL_KEYBOARD_ENABLE,                                       PARSE_ONLY_BOOL,  true  },
@@ -8143,7 +8146,7 @@ unsigned menu_displaylist_build_list(
             if (net_ifinfo_new(&interfaces))
             {
                size_t i;
-               char buf[1024];
+               char buf[NAME_MAX_LENGTH];
                const char *msg_intf = msg_hash_to_str(MSG_INTERFACE);
                size_t _len          = strlcpy(buf, msg_intf, sizeof(buf));
 
@@ -12173,17 +12176,17 @@ bool menu_displaylist_ctl(enum menu_displaylist_ctl_state type,
 
                         if (!strstr(descriptor, "Auto"))
                         {
-                           char desc_label[400];
+                           char desc_lbl[400];
                            const struct retro_keybind *keyptr =
                               &input_config_binds[port][retro_id];
-                           size_t _len        = strlcpy(desc_label,
+                           size_t _len        = strlcpy(desc_lbl,
                                  msg_hash_to_str(keyptr->enum_idx),
-                                 sizeof(desc_label));
-                           desc_label[  _len] = ',';
-                           desc_label[++_len] = ' ';
-                           desc_label[++_len] = '\0';
-                           strlcpy(desc_label + _len, descriptor, sizeof(desc_label) - _len);
-                           desc_len = strlcpy(descriptor, desc_label, sizeof(descriptor));
+                                 sizeof(desc_lbl));
+                           desc_lbl[  _len] = ',';
+                           desc_lbl[++_len] = ' ';
+                           desc_lbl[++_len] = '\0';
+                           strlcpy(desc_lbl + _len, descriptor, sizeof(desc_lbl) - _len);
+                           desc_len = strlcpy(descriptor, desc_lbl, sizeof(descriptor));
                         }
 
                         /* Add user index when display driver == rgui and sublabels
@@ -12226,17 +12229,17 @@ bool menu_displaylist_ctl(enum menu_displaylist_ctl_state type,
 
                         if (!strstr(descriptor, "Auto"))
                         {
-                           char desc_label[400];
+                           char desc_lbl[400];
                            const struct retro_keybind *keyptr =
                               &input_config_binds[port][retro_id];
-                           size_t _len        = strlcpy(desc_label,
+                           size_t _len        = strlcpy(desc_lbl,
                                  msg_hash_to_str(keyptr->enum_idx),
-                                 sizeof(desc_label));
-                           desc_label[  _len] = ',';
-                           desc_label[++_len] = ' ';
-                           desc_label[++_len] = '\0';
-                           strlcpy(desc_label + _len, descriptor, sizeof(desc_label) - _len);
-                           desc_len = strlcpy(descriptor, desc_label, sizeof(descriptor));
+                                 sizeof(desc_lbl));
+                           desc_lbl[  _len] = ',';
+                           desc_lbl[++_len] = ' ';
+                           desc_lbl[++_len] = '\0';
+                           strlcpy(desc_lbl + _len, descriptor, sizeof(desc_lbl) - _len);
+                           desc_len = strlcpy(descriptor, desc_lbl, sizeof(descriptor));
                         }
 
                         /* Add user index when display driver == rgui and sublabels
