@@ -7432,6 +7432,10 @@ MSG_HASH(
    "Паўднёва-Усходняя Азія"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_NETPLAY_MITM_SERVER_LOCATION_5,
+   "Усходняя Азія (Чхунчхон, Паўднёвая Карэя)"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_NETPLAY_MITM_SERVER_LOCATION_CUSTOM,
    "Уласная"
    )
@@ -10687,11 +10691,11 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_TRUE,
-   "Праўда"
+   "Так"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_FALSE,
-   "Хлусня"
+   "Не"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_ENABLED,
