@@ -720,7 +720,8 @@ DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_input_overlay_dpad_diag_sens,  MENU_
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_input_overlay_abxy_diag_sens,  MENU_ENUM_SUBLABEL_INPUT_OVERLAY_ABXY_DIAGONAL_SENSITIVITY)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_content_collection_list,       MENU_ENUM_SUBLABEL_PLAYLISTS_TAB)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_video_scale_integer,           MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER)
-DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_video_scale_integer_overscale, MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_OVERSCALE)
+DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_video_scale_integer_axis,      MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS)
+DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_video_scale_integer_scaling,   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_SCALING)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_video_gpu_screenshot,          MENU_ENUM_SUBLABEL_VIDEO_GPU_SCREENSHOT)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_video_rotation,                MENU_ENUM_SUBLABEL_VIDEO_ROTATION)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_screen_orientation,            MENU_ENUM_SUBLABEL_SCREEN_ORIENTATION)
@@ -739,13 +740,13 @@ DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_vrr_runloop_enable,            MENU_
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_menu_throttle_framerate,       MENU_ENUM_SUBLABEL_MENU_ENUM_THROTTLE_FRAMERATE)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_slowmotion_ratio,              MENU_ENUM_SUBLABEL_SLOWMOTION_RATIO)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_run_ahead_unsupported,         MENU_ENUM_SUBLABEL_RUN_AHEAD_UNSUPPORTED)
-DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_run_ahead_enabled,             MENU_ENUM_SUBLABEL_RUN_AHEAD_ENABLED)
-DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_run_ahead_secondary_instance,  MENU_ENUM_SUBLABEL_RUN_AHEAD_SECONDARY_INSTANCE)
+#if (defined(HAVE_DYNAMIC) || defined(HAVE_DYLIB))
+DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_runahead_mode,                 MENU_ENUM_SUBLABEL_RUNAHEAD_MODE)
+#else
+DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_runahead_mode,                 MENU_ENUM_SUBLABEL_RUNAHEAD_MODE_NO_SECOND_INSTANCE)
+#endif
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_run_ahead_hide_warnings,       MENU_ENUM_SUBLABEL_RUN_AHEAD_HIDE_WARNINGS)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_run_ahead_frames,              MENU_ENUM_SUBLABEL_RUN_AHEAD_FRAMES)
-DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_preempt_unsupported,           MENU_ENUM_SUBLABEL_PREEMPT_UNSUPPORTED)
-DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_preempt_enable,                MENU_ENUM_SUBLABEL_PREEMPT_ENABLE)
-DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_preempt_hide_warnings,         MENU_ENUM_SUBLABEL_PREEMPT_HIDE_WARNINGS)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_preempt_frames,                MENU_ENUM_SUBLABEL_PREEMPT_FRAMES)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_input_block_timeout,           MENU_ENUM_SUBLABEL_INPUT_BLOCK_TIMEOUT)
 DEFAULT_SUBLABEL_MACRO(action_bind_sublabel_rewind,                        MENU_ENUM_SUBLABEL_REWIND_ENABLE)
@@ -4177,11 +4178,8 @@ int menu_cbs_init_bind_sublabel(menu_file_list_cbs_t *cbs,
          case MENU_ENUM_LABEL_RUN_AHEAD_UNSUPPORTED:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_run_ahead_unsupported);
             break;
-         case MENU_ENUM_LABEL_RUN_AHEAD_ENABLED:
-            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_run_ahead_enabled);
-            break;
-         case MENU_ENUM_LABEL_RUN_AHEAD_SECONDARY_INSTANCE:
-            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_run_ahead_secondary_instance);
+         case MENU_ENUM_LABEL_RUNAHEAD_MODE:
+            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_runahead_mode);
             break;
          case MENU_ENUM_LABEL_RUN_AHEAD_HIDE_WARNINGS:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_run_ahead_hide_warnings);
@@ -4189,17 +4187,8 @@ int menu_cbs_init_bind_sublabel(menu_file_list_cbs_t *cbs,
          case MENU_ENUM_LABEL_RUN_AHEAD_FRAMES:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_run_ahead_frames);
             break;
-         case MENU_ENUM_LABEL_PREEMPT_UNSUPPORTED:
-            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_preempt_unsupported);
-            break;
-         case MENU_ENUM_LABEL_PREEMPT_ENABLE:
-            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_preempt_enable);
-            break;
          case MENU_ENUM_LABEL_PREEMPT_FRAMES:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_preempt_frames);
-            break;
-         case MENU_ENUM_LABEL_PREEMPT_HIDE_WARNINGS:
-            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_preempt_hide_warnings);
             break;
          case MENU_ENUM_LABEL_INPUT_BLOCK_TIMEOUT:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_input_block_timeout);
@@ -4255,8 +4244,11 @@ int menu_cbs_init_bind_sublabel(menu_file_list_cbs_t *cbs,
          case MENU_ENUM_LABEL_VIDEO_SCALE_INTEGER:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_video_scale_integer);
             break;
-         case MENU_ENUM_LABEL_VIDEO_SCALE_INTEGER_OVERSCALE:
-            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_video_scale_integer_overscale);
+         case MENU_ENUM_LABEL_VIDEO_SCALE_INTEGER_AXIS:
+            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_video_scale_integer_axis);
+            break;
+         case MENU_ENUM_LABEL_VIDEO_SCALE_INTEGER_SCALING:
+            BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_video_scale_integer_scaling);
             break;
          case MENU_ENUM_LABEL_PLAYLISTS_TAB:
             BIND_ACTION_SUBLABEL(cbs, action_bind_sublabel_content_collection_list);

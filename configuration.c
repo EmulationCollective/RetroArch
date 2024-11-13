@@ -689,12 +689,12 @@ static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_UDEV;
 static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_LINUXRAW;
 #elif defined(ANDROID)
 static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_ANDROID;
+#elif defined(HAVE_MFI)
+static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_MFI;
 #elif defined(HAVE_SDL) || defined(HAVE_SDL2)
 static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_SDL;
 #elif defined(DJGPP)
 static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_DOS;
-#elif defined(HAVE_MFI)
-static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_MFI;
 #elif defined(HAVE_HID)
 static const enum joypad_driver_enum JOYPAD_DEFAULT_DRIVER = JOYPAD_HID;
 #elif defined(__QNX__)
@@ -1753,7 +1753,6 @@ static struct config_bool_setting *populate_settings_bool(
    SETTING_BOOL("run_ahead_secondary_instance",  &settings->bools.run_ahead_secondary_instance, true, DEFAULT_RUN_AHEAD_SECONDARY_INSTANCE, false);
    SETTING_BOOL("run_ahead_hide_warnings",       &settings->bools.run_ahead_hide_warnings, true, DEFAULT_RUN_AHEAD_HIDE_WARNINGS, false);
    SETTING_BOOL("preemptive_frames_enable",      &settings->bools.preemptive_frames_enable, true, false, false);
-   SETTING_BOOL("preemptive_frames_hide_warnings", &settings->bools.preemptive_frames_hide_warnings, true, DEFAULT_PREEMPT_HIDE_WARNINGS, false);
 #if HAVE_MENU
    SETTING_BOOL("kiosk_mode_enable",             &settings->bools.kiosk_mode_enable, true, DEFAULT_KIOSK_MODE_ENABLE, false);
 #endif
@@ -1864,7 +1863,6 @@ static struct config_bool_setting *populate_settings_bool(
    SETTING_BOOL("video_windowed_fullscreen",     &settings->bools.video_windowed_fullscreen, true, DEFAULT_WINDOWED_FULLSCREEN, false);
    SETTING_BOOL("video_crop_overscan",           &settings->bools.video_crop_overscan, true, DEFAULT_CROP_OVERSCAN, false);
    SETTING_BOOL("video_scale_integer",           &settings->bools.video_scale_integer, true, DEFAULT_SCALE_INTEGER, false);
-   SETTING_BOOL("video_scale_integer_overscale", &settings->bools.video_scale_integer_overscale, true, DEFAULT_SCALE_INTEGER_OVERSCALE, false);
    SETTING_BOOL("video_smooth",                  &settings->bools.video_smooth, true, DEFAULT_VIDEO_SMOOTH, false);
    SETTING_BOOL("video_ctx_scaling",             &settings->bools.video_ctx_scaling, true, DEFAULT_VIDEO_CTX_SCALING, false);
    SETTING_BOOL("video_force_aspect",            &settings->bools.video_force_aspect, true, DEFAULT_FORCE_ASPECT, false);
@@ -2457,6 +2455,8 @@ static struct config_uint_setting *populate_settings_uint(
    SETTING_UINT("video_fullscreen_y",            &settings->uints.video_fullscreen_y, true, DEFAULT_FULLSCREEN_Y, false);
 #endif
    SETTING_UINT("video_scale",                   &settings->uints.video_scale, true, DEFAULT_SCALE, false);
+   SETTING_UINT("video_scale_integer_axis",      &settings->uints.video_scale_integer_axis, true, DEFAULT_SCALE_INTEGER_AXIS, false);
+   SETTING_UINT("video_scale_integer_scaling",   &settings->uints.video_scale_integer_scaling, true, DEFAULT_SCALE_INTEGER_SCALING, false);
    SETTING_UINT("video_window_opacity",          &settings->uints.video_window_opacity, true, DEFAULT_WINDOW_OPACITY, false);
    SETTING_UINT("video_shader_delay",            &settings->uints.video_shader_delay, true, DEFAULT_SHADER_DELAY, false);
 #ifdef GEKKO
@@ -4013,19 +4013,13 @@ static bool config_load_file(global_t *global,
    }
 
 #if defined(__APPLE__) && defined(OSX)
-#if defined(__aarch64__)
-   /* Wrong architecture, set it back to arm64 */
-   if (string_is_equal(settings->paths.network_buildbot_url,
-            "http://buildbot.libretro.com/nightly/apple/osx/x86_64/latest/"))
-       configuration_set_string(settings,
-             settings->paths.network_buildbot_url, DEFAULT_BUILDBOT_SERVER_URL);
-#elif defined(__x86_64__)
-   /* Wrong architecture, set it back to x86_64 */
-   if (string_is_equal(settings->paths.network_buildbot_url,
-            "http://buildbot.libretro.com/nightly/apple/osx/arm64/latest/"))
-       configuration_set_string(settings,
-             settings->paths.network_buildbot_url, DEFAULT_BUILDBOT_SERVER_URL);
-#endif
+   if (     ((frontend_driver_get_cpu_architecture() == FRONTEND_ARCH_X86_64) &&
+             string_ends_with(settings->paths.network_buildbot_url, "/arm64/latest/"))
+         || ((frontend_driver_get_cpu_architecture() == FRONTEND_ARCH_ARMV8) &&
+             string_ends_with(settings->paths.network_buildbot_url, "/x86_64/latest/")))
+      /* Wrong architecture, set it back */
+      configuration_set_string(settings,
+            settings->paths.network_buildbot_url, DEFAULT_BUILDBOT_SERVER_URL);
 #endif
 
    if (string_is_equal(settings->paths.path_menu_wallpaper, "default"))
@@ -5196,10 +5190,10 @@ bool config_save_autoconf_profile(const
    config_set_string(conf, "input_driver",
          joypad_driver);
    config_set_string(conf, "input_device",
-         input_config_get_device_name(user));
+         input_config_get_device_name(settings->uints.input_joypad_index[user]));
 
-   pid_user = input_config_get_device_pid(user);
-   vid_user = input_config_get_device_vid(user);
+   pid_user = input_config_get_device_pid(settings->uints.input_joypad_index[user]);
+   vid_user = input_config_get_device_vid(settings->uints.input_joypad_index[user]);
 
    if (pid_user && vid_user)
    {

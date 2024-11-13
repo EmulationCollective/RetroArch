@@ -505,7 +505,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_CORE_PATH,
-   "Поўны шлях да ядра"
+   "Поўны шлях"
 )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_SAVESTATE_SUPPORT_LEVEL,
@@ -537,11 +537,11 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_FIRMWARE_PATH,
-   "- Прагляд у: '%s'"
+   "- Прагляд у: %s"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_MISSING_REQUIRED,
-   "Адсутнічае, патрабуецца:"
+   "Адсутнічае, неабходнае:"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_MISSING_OPTIONAL,
@@ -549,7 +549,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_PRESENT_REQUIRED,
-   "Маецца, патрабуецца:"
+   "Маецца, неабходнае:"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_PRESENT_OPTIONAL,
@@ -2523,15 +2523,35 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER,
-   "Маштабаваць малюнак з цэлалікім інтэрвалам. Базавы памер залежыць ад геаметрыі і суадносін бакоў сістэмы. Калі не ўключана 'Прымусовая ўстаноўка' для суадносін бакоў, значэнні X/Y будуць мяняцца незалежна адзін ад аднаго."
+   "Змяняць маштаб выявы толькі з цэлымі крокамі. Базавыя памеры залежаць ад геаметрыі і суадносін бакоў, перададзеныя ядром."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_OVERSCALE,
-   "Павялічванне цэлалікавага маштабу"
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_AXIS,
+   "Вось цэлалікавага маштабу"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_OVERSCALE,
-   "Рабіць акругленне пры цэлалікім маштабаванні ў бок большага, а не меншага цэлага ліку."
+   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
+   "Змяняць маштаб толькі па вышыні або як па вышыні, так і па шырыні. Паўкрокі прымяняюцца да крыніц з высокай раздзяляльнасцю."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
+   "Цэлалікавае маштабаванне"
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_SCALING,
+   "Акругліць у меншы або большы бок да наступнага цэлага ліку. 'Разумна' заніжае маштаб пры празмернай абрэзцы выявы."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_UNDERSCALE,
+   "Заніжэнне маштабу"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_OVERSCALE,
+   "Завышэнне маштабу"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_SMART,
+   "Разумнае"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_ASPECT_RATIO_INDEX,
@@ -3883,7 +3903,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_META_DISK_NEXT,
-   "Павялічвае бягучы індэкс дыска. Віртуальны латок дыска мусіць быць адкрытым."
+   "Павялічвае бягучы індэкс дыска. Віртуальны латок дыска мае быць адкрытым."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_INPUT_META_DISK_PREV,
@@ -3891,7 +3911,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_META_DISK_PREV,
-   "Паніжае бягучы індэкс дыска. Віртуальны латок дыска мусіць быць адкрытым."
+   "Паніжае бягучы індэкс дыска. Віртуальны латок дыска мае быць адкрытым."
    )
 
 MSG_HASH(
@@ -4059,11 +4079,11 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_INPUT_META_PREEMPT_TOGGLE,
-   "Папярэджальныя кадры (пераключэнне)"
+   "Папераджальныя кадры (пераключэнне)"
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_META_PREEMPT_TOGGLE,
-   "Уключае/выключае папярэджальныя кадры."
+   "Уключае/выключае папераджальныя кадры."
    )
 
 MSG_HASH(
@@ -4411,12 +4431,8 @@ MSG_HASH(
    "Бягучае ядро ​​несумяшчальнае з забяганнем праз адсутнасць дэтэрмінаванай падтрымкі захавання стану."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_RUN_AHEAD_ENABLED,
-   "Забяганне для скарачэння латэнтнасці"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_RUN_AHEAD_ENABLED,
-   "Апрацоўваць логіку ядра на адзін або больш кадраў наперад з наступным адкатам стану для памяншэння атрыманай затрымкі ўводу."
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE,
+   "Забяганне"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_RUN_AHEAD_FRAMES,
@@ -4427,12 +4443,26 @@ MSG_HASH(
    "Колькасць кадраў забягання. Выклікае нестабільнасць геймплэя пры завышэнні колькасці кадраў унутрагульнявой затрымкі."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_RUN_AHEAD_SECONDARY_INSTANCE,
-   "Выкарыстоўваць другасны экзэмпляр для забягання"
+   MENU_ENUM_SUBLABEL_RUNAHEAD_MODE,
+   "Запускае дадатковую логіку ядра, каб скараціць затрымку. Адзіны асобнік сутыкае будучы кадр, затым перазагружае бягучы стан. Другі трымае толькі пад відэа асобнік ядра на будучым кадры, каб пазбегнуць праблем са станам гуку. Папераджальныя кадры могуць запускаць мінулыя [...]"
+   )
+#if !(defined(HAVE_DYNAMIC) || defined(HAVE_DYLIB))
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_RUNAHEAD_MODE_NO_SECOND_INSTANCE,
+   "Запускае дадатковую логіку ядра, каб скараціць затрымку. Адзіны асобнік сутыкае будучы кадр, затым перазагружае бягучы стан. Папераджальныя кадры могуць дзеля эфектыўнасці запускаць мінулыя кадры з новым уводам."
+   )
+#endif
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE_SINGLE_INSTANCE,
+   "Рэжым адзінага асобніка"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_RUN_AHEAD_SECONDARY_INSTANCE,
-   "Выкарыстоўваць для забягання другасны экзэмпляр ядра RetroArch. Прадухіляе праблемы з гукам падчас загрузкі стану."
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE_SECOND_INSTANCE,
+   "Рэжым другога асобніка"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE_PREEMPTIVE_FRAMES,
+   "Рэжым папераджальных кадраў"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_RUN_AHEAD_HIDE_WARNINGS,
@@ -4443,36 +4473,12 @@ MSG_HASH(
    "Хаваць папярэджанні, якія паказваюцца пры выкарыстанні забягання з ядром без падтрымкі захавання станаў."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_PREEMPT_UNSUPPORTED,
-   "[Кадры апярэджання недаступныя]"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_PREEMPT_UNSUPPORTED,
-   "Бягучае ядро ​​несумяшчальнае з кадрамі апярэджання праз адсутнасць дэтэрмінаванай падтрымкі захавання стану."
-   )
-MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_PREEMPT_ENABLE,
-   "Апрацоўка кадраў апярэджання"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_PREEMPT_ENABLE,
-   "Паўторная апрацоўка логікі ядра з апошнімі падзеямі ўводу пры змене стану кантролера. Працуе хутчэй забегання, але можа выклікаць праблемы з гукам у ядраў пры загрузцы хуткіх захаванняў."
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_VALUE_PREEMPT_FRAMES,
-   "Колькасць папярэджальных кадраў"
+   "Колькасць папераджальных кадраў"
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_PREEMPT_FRAMES,
    "Колькасць кадраў для паўторнай апрацоўкі. Выклікае няроўнасць геймплэя, калі перавышана колькасць кадраў унутрагульнявой затрымкі."
-   )
-MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_PREEMPT_HIDE_WARNINGS,
-   "Хаваць паведамленні аб папярэджальных кадрах"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_PREEMPT_HIDE_WARNINGS,
-   "Не паказваць папярэджанне пры несумяшчальнасці ядра з папярэджальнымі кадрамі."
    )
 
 /* Settings > Core */
@@ -11476,7 +11482,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_MENU_XMB_VERTICAL_FADE_FACTOR,
-   "Згасанне па вертыкалі"
+   "Велічыня вертыкальнага згасання"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_MENU_XMB_SHOW_TITLE_HEADER,
@@ -11924,7 +11930,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_MATERIALUI_MENU_TRANSITION_ANIM_FADE,
-   "Затуханне"
+   "Згасанне"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_MATERIALUI_MENU_TRANSITION_ANIM_SLIDE,
@@ -13639,7 +13645,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_COMPILED_AGAINST_API,
-   "Скампіляваны супраць API"
+   "Скампіляваны паводле API"
    )
 MSG_HASH(
    MSG_CONFIG_DIRECTORY_NOT_SET,
@@ -14415,11 +14421,11 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_LEADERBOARD_STARTED,
-   "Спроба ўвайсці ў табліцу лідараў пачата"
+   "Спроба трапіць у табліцу лідараў пачата"
    )
 MSG_HASH(
    MSG_LEADERBOARD_FAILED,
-   "Не ўдалося ўвайсці ў табліцу лідараў"
+   "Не ўдалося трапіць у табліцу лідараў"
    )
 MSG_HASH(
    MSG_LEADERBOARD_SUBMISSION,
@@ -14655,7 +14661,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_RUNAHEAD_ENABLED_WITH_SECOND_INSTANCE,
-   "Уключана забяганне з другім інстансам. Выдалена кадраў затрымкі: %u."
+   "Уключана забяганне з другім асобнікам. Выдалена кадраў затрымкі: %u."
    )
 MSG_HASH(
    MSG_RUNAHEAD_DISABLED,
@@ -14679,7 +14685,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_RUNAHEAD_FAILED_TO_CREATE_SECONDARY_INSTANCE,
-   "Не ўдалося стварыць другі інстанс. Забяганне будзе выкарыстоўваць толькі адзін інстанс."
+   "Не ўдалося стварыць другі асобнік. Забяганне будзе выкарыстоўваць толькі адзін экзэмпляр."
    )
 MSG_HASH(
    MSG_PREEMPT_ENABLED,
@@ -14687,11 +14693,11 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_PREEMPT_DISABLED,
-   "Папераджальныя кадры выключаны."
+   "Папераджальныя кадры выключаныя."
    )
 MSG_HASH(
    MSG_PREEMPT_CORE_DOES_NOT_SUPPORT_SAVESTATES,
-   "Папераджальныя кадры выключаны, бо бягучае ядро ​​не падтрымлівае захаванне станаў."
+   "Папераджальныя кадры выключаныя, бо бягучае ядро ​​не падтрымлівае захаванне станаў."
    )
 MSG_HASH(
    MSG_PREEMPT_CORE_DOES_NOT_SUPPORT_PREEMPT,
@@ -14703,11 +14709,11 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_PREEMPT_FAILED_TO_SAVE_STATE,
-   "Не ўдалося стварыць захаванне. Папераджальныя кадры выключаны."
+   "Не ўдалося стварыць стан захавання. Папераджальныя кадры выключаныя."
    )
 MSG_HASH(
    MSG_PREEMPT_FAILED_TO_LOAD_STATE,
-   "Не атрымалася загрузіць захаванне. Папераджальныя кадры выключаны."
+   "Не атрымалася загрузіць стан. Папераджальныя кадры выключаныя."
    )
 MSG_HASH(
    MSG_SCANNING_OF_FILE_FINISHED,

@@ -1946,6 +1946,15 @@ static uintptr_t ozone_entries_icon_get_texture(
             if (!string_is_equal(enum_path, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_CORE_INFORMATION)))
                return 0;
             return ozone->icons_textures[OZONE_ENTRIES_ICONS_TEXTURE_CORE];
+      case MENU_ENUM_LABEL_CORE_INFO_ENTRY:
+            if (strstr(enum_path, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_MISSING_REQUIRED)))
+               return ozone->icons_textures[OZONE_ENTRIES_ICONS_TEXTURE_CLOSE];
+            else if (strstr(enum_path, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_MISSING_OPTIONAL)))
+               return ozone->icons_textures[OZONE_ENTRIES_ICONS_TEXTURE_INFO];
+            else if (strstr(enum_path, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_PRESENT_REQUIRED))
+                  || strstr(enum_path, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_PRESENT_OPTIONAL)))
+               return ozone->icons_textures[OZONE_ENTRIES_ICONS_TEXTURE_CHECKMARK];
+            return 0;
       case MENU_ENUM_LABEL_LOAD_CONTENT_LIST:
       case MENU_ENUM_LABEL_SUBSYSTEM_SETTINGS:
       case MENU_ENUM_LABEL_SCAN_FILE:
@@ -3708,10 +3717,10 @@ static void ozone_update_savestate_thumbnail_path(void *data, unsigned i)
 
       if (!string_is_empty(entry.label))
       {
-         if (   string_to_unsigned(entry.label) == MENU_ENUM_LABEL_STATE_SLOT
-             || string_is_equal(entry.label, "state_slot")
-             || string_is_equal(entry.label, "loadstate")
-             || string_is_equal(entry.label, "savestate"))
+         if (     string_to_unsigned(entry.label) == MENU_ENUM_LABEL_STATE_SLOT
+               || string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_STATE_SLOT))
+               || string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_LOAD_STATE))
+               || string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_SAVE_STATE)))
          {
             size_t _len;
             char path[PATH_MAX_LENGTH * 2];

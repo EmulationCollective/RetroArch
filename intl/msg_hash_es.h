@@ -505,7 +505,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_CORE_PATH,
-   "Ruta completa del núcleo"
+   "Ruta completa"
 )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_SAVESTATE_SUPPORT_LEVEL,
@@ -533,7 +533,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_FIRMWARE_PATH,
-   "- Buscando en: «%s»"
+   "- Buscando en: %s"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_MISSING_REQUIRED,
@@ -2507,15 +2507,35 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER,
-   "Limita el escalado de vídeo a múltiplos enteros. El tamaño base dependerá de la geometría indicada por el sistema y la relación de aspecto. Si la opción «Forzar relación de aspecto» está desactivada, los valores X e Y serán escalados individualmente."
+   "Limita el escalado de vídeo a múltiplos enteros. El tamaño base dependerá de la geometría del sistema y la relación de aspecto."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_OVERSCALE,
-   "Sobreescalar imagen al usar números enteros"
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_AXIS,
+   "Ejes del escalado por números enteros"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_OVERSCALE,
-   "Obliga al escalado por números enteros a redondear siempre a un valor superior en vez de a uno inferior."
+   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
+   "Escala solo la altura o también la anchura. Los escalados irregulares se aplicarán a las imágenes en alta resolución."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
+   "Tipo de escalado por números enteros"
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_SCALING,
+   "Aumenta o reduce la escala al siguiente valor entero. «Inteligente» reducirá la escala cuando la imagen vaya a quedar demasiado recortada."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_UNDERSCALE,
+   "Reducir escala"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_OVERSCALE,
+   "Aumentar escala"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_SMART,
+   "Inteligente"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_ASPECT_RATIO_INDEX,
@@ -4121,7 +4141,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_INPUT_META_NETPLAY_FADE_CHAT_TOGGLE,
-   "Desvanecer chat del juego en red"
+   "Desvanecer chat del juego en red (alternar)"
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_META_NETPLAY_FADE_CHAT_TOGGLE,
@@ -4387,12 +4407,8 @@ MSG_HASH(
    "El núcleo actual no es compatible con la reducción predictiva de latencia por no tener soporte para guardados rápidos determinísticos."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_RUN_AHEAD_ENABLED,
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE,
    "Reducción predictiva de latencia"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_RUN_AHEAD_ENABLED,
-   "Ejecuta la lógica del núcleo uno o más fotogramas por anticipado y luego carga un guardado rápido para reducir la latencia de entrada percibida."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_RUN_AHEAD_FRAMES,
@@ -4403,12 +4419,26 @@ MSG_HASH(
    "Ajusta el número de fotogramas a ejecutar de forma anticipada. Puede haber distorsiones visuales si el número de fotogramas retrasados supera al valor interno del juego."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_RUN_AHEAD_SECONDARY_INSTANCE,
-   "Usar una segunda instancia para la reducción predictiva"
+   MENU_ENUM_SUBLABEL_RUNAHEAD_MODE,
+   "Ejecuta lógicas adicionales del núcleo para reducir la latencia. Una instancia ejecuta la lógica hasta un fotograma futuro y luego vuelve a cargar el estado actual. Doble instancia mantiene activa una instancia del núcleo solo para vídeo en un fotograma futuro para evitar problemas con el estado del audio. Fotogramas preventivos ejecuta los fotogramas pasados con acciones de entrada nuevas cuando sean necesarios para mejorar la eficacia."
+   )
+#if !(defined(HAVE_DYNAMIC) || defined(HAVE_DYLIB))
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_RUNAHEAD_MODE_NO_SECOND_INSTANCE,
+   "Ejecuta lógicas adicionales del núcleo para reducir la latencia. Una instancia ejecuta la lógica hasta un fotograma futuro y luego vuelve a cargar el estado actual. Fotogramas preventivos ejecuta los fotogramas pasados con acciones de entrada nuevas cuando sean necesarios para mejorar la eficacia."
+   )
+#endif
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE_SINGLE_INSTANCE,
+   "Modo de una instancia"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_RUN_AHEAD_SECONDARY_INSTANCE,
-   "Utiliza una segunda instancia del núcleo RetroArch para llevar a cabo la reducción predictiva de latencia. Previene los problemas de audio causados al cargar guardados rápidos."
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE_SECOND_INSTANCE,
+   "Modo de doble instancia"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_RUNAHEAD_MODE_PREEMPTIVE_FRAMES,
+   "Modo de fotogramas preventivos"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_RUN_AHEAD_HIDE_WARNINGS,
@@ -4419,36 +4449,12 @@ MSG_HASH(
    "Oculta el mensaje de advertencia que aparece al usar la reducción predictiva de latencia si el núcleo no es compatible con los guardados rápidos."
    )
 MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_PREEMPT_UNSUPPORTED,
-   "[Sistema de fotogramas preventivos no disponible]"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_PREEMPT_UNSUPPORTED,
-   "El núcleo actual no es compatible con el sistema de fotogramas preventivos por no tener soporte para guardados rápidos determinísticos."
-   )
-MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_PREEMPT_ENABLE,
-   "Ejecutar fotogramas preventivos"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_PREEMPT_ENABLE,
-   "Ejecuta varias veces la lógica del núcleo con las últimas acciones de entrada en cuanto cambie el estado del mando. Este sistema es más rápido que la reducción predictiva de latencia, pero no evita los problemas de audio que podrían tener los núcleos al cargar guardados rápidos."
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_VALUE_PREEMPT_FRAMES,
    "N.º de fotogramas preventivos"
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_PREEMPT_FRAMES,
    "Ajusta el número de fotogramas preventivos que se ejecutarán. Puede haber distorsiones visuales si el número de fotogramas retrasados supera al valor interno del juego."
-   )
-MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_PREEMPT_HIDE_WARNINGS,
-   "Ocultar advertencias de fotogramas preventivos"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_PREEMPT_HIDE_WARNINGS,
-   "Oculta el mensaje de advertencia que aparecerá cuando un núcleo no sea compatible con el sistema de fotogramas preventivos."
    )
 
 /* Settings > Core */
