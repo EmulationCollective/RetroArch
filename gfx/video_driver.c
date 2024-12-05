@@ -1895,6 +1895,29 @@ void video_driver_unset_stub_frame(void)
    video_st->frame_bak               = NULL;
 }
 
+
+
+/* Get time diff between frames in usec*/
+uint32_t video_driver_get_frame_time_delta_usec(void)
+{
+   static retro_time_t last_time;
+   retro_time_t now_time;
+   retro_time_t delta_time;
+   now_time = cpu_features_get_time_usec();
+   delta_time = now_time - last_time;
+   last_time = now_time;
+   return delta_time;
+}
+
+/* Get Original fps (core fps) */
+float video_driver_get_original_fps(void)
+{
+   video_driver_state_t *video_st   = &video_driver_st;
+   struct retro_system_av_info *av_info   = &video_st->av_info;
+   float original_fps = (float)video_st->av_info.timing.fps;
+   return original_fps;
+}
+
 /* Get aspect ratio (DAR) requested by the core */
 float video_driver_get_core_aspect(void)
 {
@@ -3603,6 +3626,7 @@ void video_driver_frame(const void *data, unsigned width,
       video_driver_pix_fmt        = video_st->pix_fmt;
    bool runloop_idle              = (runloop_st->flags & RUNLOOP_FLAG_IDLE) ? true : false;
    bool video_driver_active       = (video_st->flags   & VIDEO_FLAG_ACTIVE) ? true : false;
+   bool menu_is_alive             = false;
 #if defined(HAVE_GFX_WIDGETS)
    dispgfx_widget_t *p_dispwidget = dispwidget_get_ptr();
    bool widgets_active            = p_dispwidget->active;
@@ -3645,6 +3669,10 @@ void video_driver_frame(const void *data, unsigned width,
 
    video_driver_build_info(&video_info);
 
+#ifdef HAVE_MENU
+   menu_is_alive = (video_info.menu_st_flags & MENU_ST_FLAG_ALIVE) ? true : false;
+#endif
+
    /* Take target refresh rate as initial FPS value instead of 0.00 */
    if (!last_fps)
       last_fps = video_info.refresh_rate;
@@ -3659,15 +3687,11 @@ void video_driver_frame(const void *data, unsigned width,
     *   current frame is not (i.e. if core was
     *   previously sending duped frames, ensure
     *   that the next frame update is captured) */
-#if HAVE_MENU
-   if (   video_info.input_driver_nonblock_state
-       && video_info.fastforward_frameskip
-       &&  !((video_info.menu_st_flags & MENU_ST_FLAG_ALIVE)
-       ||   (last_frame_duped && !!data)))
-#else
-   if (   video_info.input_driver_nonblock_state
-       && video_info.fastforward_frameskip)
-#endif
+   if (     video_info.input_driver_nonblock_state
+         && video_info.fastforward_frameskip
+         && !( menu_is_alive
+            || (last_frame_duped && !!data))
+      )
    {
       uint16_t frame_time_accumulator_prev = frame_time_accumulator;
       uint16_t frame_time_delta            = new_time - last_time;
@@ -3739,7 +3763,7 @@ void video_driver_frame(const void *data, unsigned width,
 
       /* Consider frame dropped when frame time exceeds 1.75x target */
       if (     video_st->frame_count > 4
-            && !(video_info.menu_st_flags & MENU_ST_FLAG_ALIVE)
+            && !menu_is_alive
             && frame_time > 1000000.0f / video_info.refresh_rate * 1.75f)
          video_st->frame_drop_count++;
 
@@ -3985,11 +4009,7 @@ void video_driver_frame(const void *data, unsigned width,
                   msg_entry.category,
                   msg_entry.prio,
                   false,
-#if HAVE_MENU
-                  (video_info.menu_st_flags & MENU_ST_FLAG_ALIVE) ? true : false
-#else
-                  false
-#endif
+                  menu_is_alive
             );
       }
       /* ...otherwise, just output message via

@@ -1335,6 +1335,8 @@ static bool d3d10_gfx_set_shader(void* data,
             &d3d10->frame.output_size,       /* FinalViewportSize */
             &d3d10->pass[i].frame_count,     /* FrameCount */
             &d3d10->pass[i].frame_direction, /* FrameDirection */
+            &d3d10->pass[i].frame_time_delta,/* FrameTimeDelta */
+            &d3d10->pass[i].original_fps,        /* OriginalFPS */
             &d3d10->pass[i].rotation,        /* Rotation */
             &d3d10->pass[i].core_aspect,     /* OriginalAspect */
             &d3d10->pass[i].core_aspect_rot, /* OriginalAspectRotated */
@@ -2171,7 +2173,11 @@ static bool d3d10_gfx_frame(
       *osd_params             = (struct font_params*)
       &video_info->osd_stat_params;
    const char *stat_text      = video_info->stat_text;
+#ifdef HAVE_MENU
    bool menu_is_alive         = (video_info->menu_st_flags & MENU_ST_FLAG_ALIVE) ? true : false;
+#else
+   bool menu_is_alive         = false;
+#endif
    bool overlay_behind_menu   = video_info->overlay_behind_menu;
    unsigned black_frame_insertion = video_info->black_frame_insertion;
    int bfi_light_frames;
@@ -2330,6 +2336,10 @@ static bool d3d10_gfx_frame(
 #else
          d3d10->pass[i].frame_direction = 1;
 #endif
+
+         d3d10->pass[i].frame_time_delta = video_driver_get_frame_time_delta_usec();
+
+         d3d10->pass[i].original_fps = video_driver_get_original_fps();
 
          d3d10->pass[i].rotation = retroarch_get_rotation();
 
