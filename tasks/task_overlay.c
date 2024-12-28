@@ -124,7 +124,6 @@ static void task_overlay_desc_populate_eightway_config(
    size_t _len;
    input_driver_state_t *input_st = input_state_get_ptr();
    overlay_eightway_config_t *eightway;
-   char conf_key_base[20];
    char conf_key[64];
    char *str;
 
@@ -162,11 +161,10 @@ static void task_overlay_desc_populate_eightway_config(
          return;
    }
 
-   snprintf(conf_key_base, sizeof(conf_key_base), "overlay%u_desc%u", ol_idx, desc_idx);
+   _len = snprintf(conf_key, sizeof(conf_key), "overlay%u_desc%u", ol_idx, desc_idx);
 
    /* Redefine eightway vals if specified in conf
     */
-   _len = strlcpy(conf_key, conf_key_base, sizeof(conf_key));
    strlcpy(conf_key + _len, "_up", sizeof(conf_key) - _len);
    if (config_get_string(loader->conf, conf_key, &str))
    {
@@ -273,7 +271,7 @@ static bool task_overlay_load_desc(
       goto end;
    }
 
-   if (!config_get_array(conf, overlay_desc_key, overlay, sizeof(overlay)))
+   if (config_get_array(conf, overlay_desc_key, overlay, sizeof(overlay)) == 0)
    {
       RARCH_ERR("[Overlay]: Didn't find key: %s.\n", overlay_desc_key);
       ret = false;
@@ -683,7 +681,6 @@ static void task_overlay_deferred_load(retro_task_t *task)
    for (i = 0; i < loader->pos_increment; i++, loader->pos++)
    {
       size_t _len;
-      char conf_key_base[10];
       char conf_key[32];
       char tmp_str[PATH_MAX_LENGTH];
       float tmp_float                   = 0.0;
@@ -704,8 +701,7 @@ static void task_overlay_deferred_load(retro_task_t *task)
 
       overlay = &loader->overlays[loader->pos];
 
-      snprintf(conf_key_base, sizeof(conf_key_base), "overlay%u", loader->pos);
-      _len = strlcpy(conf_key, conf_key_base,  sizeof(conf_key));
+      _len = snprintf(conf_key, sizeof(conf_key), "overlay%u", loader->pos);
 
       strlcpy(conf_key + _len, "_rect", sizeof(conf_key) - _len);
       strlcpy(overlay->config.rect.key, conf_key,
@@ -840,7 +836,7 @@ static void task_overlay_deferred_load(retro_task_t *task)
       overlay->w = overlay->h = 1.0f;
 
       if (config_get_array(conf, overlay->config.rect.key,
-               overlay->config.rect.array, sizeof(overlay->config.rect.array)))
+               overlay->config.rect.array, sizeof(overlay->config.rect.array)) > 0)
       {
          char *tok, *save;
          char *elem0              = NULL;

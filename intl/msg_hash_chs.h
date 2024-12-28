@@ -2955,10 +2955,6 @@ MSG_HASH(
    MENU_ENUM_LABEL_VALUE_AUDIO_LATENCY,
    "音频延迟 (毫秒)"
    )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_AUDIO_LATENCY,
-   "音频延迟，单位为毫秒。如果音频驱动程序不支持，则不会生效。"
-   )
 
 #ifdef HAVE_MICROPHONE
 /* Settings > Audio > Input */
@@ -3257,14 +3253,6 @@ MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_REMAP_BINDS_ENABLE,
    "用当前核心的重映射绑定覆盖输入绑定。"
    )
-MSG_HASH(
-   MENU_ENUM_LABEL_VALUE_INPUT_REMAP_SORT_BY_CONTROLLER_ENABLE,
-   "Sort Remaps By Gamepad"
-   )   
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_INPUT_REMAP_SORT_BY_CONTROLLER_ENABLE,
-   "Remaps will only apply to the active gamepad in which they were saved."
-   )   
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_INPUT_AUTODETECT_ENABLE,
    "自动配置"

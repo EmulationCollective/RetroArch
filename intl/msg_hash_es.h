@@ -723,6 +723,30 @@ MSG_HASH(
    "Soporte de SDL2"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D8_SUPPORT,
+   "Soporte de Direct3D 8"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D9_SUPPORT,
+   "Soporte de Direct3D 9"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D10_SUPPORT,
+   "Soporte de Direct3D 10"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D11_SUPPORT,
+   "Soporte de Direct3D 11"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D12_SUPPORT,
+   "Soporte de Direct3D 12"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_GDI_SUPPORT,
+   "Soporte de GDI"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_VULKAN_SUPPORT,
    "Soporte de Vulkan"
    )
@@ -801,6 +825,10 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_PULSEAUDIO_SUPPORT,
    "Soporte de PulseAudio"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_PIPEWIRE_SUPPORT,
+   "Soporte de PipeWire"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_COREAUDIO_SUPPORT,
@@ -1734,6 +1762,10 @@ MSG_HASH(
    "Controlador para PulseAudio. Si el sistema utiliza PulseAudio, debes utilizar este controlador en lugar de, por ejemplo, el controlador para ALSA."
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_HELP_AUDIO_DRIVER_PIPEWIRE,
+   "Controlador para PipeWire. Si el sistema utiliza PipeWire, debes utilizar este controlador en lugar de, por ejemplo, el controlador para PulseAudio."
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_HELP_AUDIO_DRIVER_JACK,
    "Controlador para Jack Audio Connection Kit (JACK, por sus siglas en inglés)."
    )
@@ -2612,11 +2644,11 @@ MSG_HASH(
    "Compensación del eje Y del punto de anclaje del área de visualización"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_X, 
+   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_X,
    "Compensación personalizada usada para desplazar horizontalmente el área de visualización (si es más ancha que la altura del contenido). 0,0 significa llevar al extremo izquierdo y 1,0 significa llevar al extremo derecho."
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_Y, 
+   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_Y,
    "Compensación personalizada usada para desplazar verticalmente el área de visualización (si es más alta que la altura del contenido). 0,0 significa llevar al extremo superior y 1,0 significa llevar al extremo inferior."
    )
 #if defined(RARCH_MOBILE)
@@ -2637,11 +2669,11 @@ MSG_HASH(
    "Compensación del eje Y del punto de anclaje del área de visualización (orientación vertical)"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_PORTRAIT_X, 
+   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_PORTRAIT_X,
    "Compensación personalizada usada para desplazar horizontalmente el área de visualización (si es más ancha que la altura del contenido) en una orientación vertical. 0,0 significa llevar al extremo izquierdo y 1,0 significa llevar al extremo derecho."
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_PORTRAIT_Y, 
+   MENU_ENUM_SUBLABEL_VIDEO_VIEWPORT_BIAS_PORTRAIT_Y,
    "Compensación personalizada usada para desplazar verticalmente el área de visualización (si es más alta que la altura del contenido) en una orientación vertical. 0,0 significa llevar al extremo superior y 1,0 significa llevar al extremo inferior."
    )
 #endif
@@ -3005,7 +3037,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_AUDIO_LATENCY,
-   "Selecciona la latencia deseada para el audio en milisegundos. Este valor podría ignorarse si el controlador no puede generar dicha latencia."
+   "La latencia máxima del audio en milisegundos. El controlador intentará mantener la latencia real en un 50 % de este valor. El valor podría no ser respetado si el controlador de audio no puede producir dicha latencia."
    )
 
 #ifdef HAVE_MICROPHONE
@@ -3308,11 +3340,11 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_INPUT_REMAP_SORT_BY_CONTROLLER_ENABLE,
    "Ordenar reasignaciones por mando"
-   )   
+   )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_REMAP_SORT_BY_CONTROLLER_ENABLE,
    "Las reasignaciones se aplicarán únicamente al mando activo en el que se hayan guardado."
-   )   
+   )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_INPUT_AUTODETECT_ENABLE,
    "Configuración automática"
@@ -5333,6 +5365,10 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_OVERLAY_AUTOLOAD_PREFERRED,
    "Cargar automáticamente la superposición preferida"
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_OVERLAY_AUTOLOAD_PREFERRED,
+   "Da preferencia a la carga de superposiciones según el nombre del sistema en vez de utilizar el preajuste predeterminado como respaldo. Esta opción se ignorará si se ha establecido una personalización para el preajuste de superposiciones."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_OVERLAY_OPACITY,
@@ -12068,6 +12104,10 @@ MSG_HASH(
    "Pantalla de título"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_QT_THUMBNAIL_LOGO,
+   "Logotipo"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_QT_ALL_PLAYLISTS,
    "Todas las listas de reproducción"
    )
@@ -14782,10 +14822,6 @@ MSG_HASH(
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_PAUSED_MANUAL_FRAME_DELAY,
    "Modo «hardcore» pausado. No se permite ajustar manualmente el retraso en los fotogramas de vídeo."
-   )
-MSG_HASH(
-   MSG_CHEEVOS_HARDCORE_PAUSED_SHADER_SUBFRAMES,
-   "Modo «hardcore» pausado. No se permiten los subfotogramas en shaders."
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_PAUSED_VSYNC_SWAP_INTERVAL,

@@ -311,6 +311,14 @@ void gfx_ctx_wl_destroy_resources_common(gfx_ctx_wayland_data_t *wl)
       zwp_pointer_constraints_v1_destroy(wl->pointer_constraints);
    if (wl->relative_pointer_manager)
       zwp_relative_pointer_manager_v1_destroy (wl->relative_pointer_manager);
+   if (wl->content_type_manager)
+      wp_content_type_manager_v1_destroy (wl->content_type_manager);
+   if (wl->content_type)
+      wp_content_type_v1_destroy (wl->content_type);
+   if (wl->cursor_shape_manager)
+      wp_cursor_shape_manager_v1_destroy (wl->cursor_shape_manager);
+   if (wl->cursor_shape_device)
+      wp_cursor_shape_device_v1_destroy (wl->cursor_shape_device);
    if (wl->seat)
       wl_seat_destroy(wl->seat);
    if (wl->xdg_shell)
@@ -358,6 +366,10 @@ void gfx_ctx_wl_destroy_resources_common(gfx_ctx_wayland_data_t *wl)
    wl->seat                     = NULL;
    wl->relative_pointer_manager = NULL;
    wl->pointer_constraints      = NULL;
+   wl->content_type             = NULL;
+   wl->content_type_manager     = NULL;
+   wl->cursor_shape_manager     = NULL;
+   wl->cursor_shape_device      = NULL;
    wl->idle_inhibit_manager     = NULL;
    wl->deco_manager             = NULL;
    wl->surface                  = NULL;
@@ -693,7 +705,7 @@ bool gfx_ctx_wl_init_common(
 
    if (!wl->idle_inhibit_manager)
    {
-      RARCH_LOG("[Wayland]: Compositor doesn't support zwp_idle_inhibit_manager_v1 protocol\n");
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", zwp_idle_inhibit_manager_v1_interface.name);
 #ifdef HAVE_DBUS
       dbus_ensure_connection();
 #endif
@@ -701,18 +713,54 @@ bool gfx_ctx_wl_init_common(
 
    if (!wl->deco_manager)
    {
-      RARCH_LOG("[Wayland]: Compositor doesn't support zxdg_decoration_manager_v1 protocol\n");
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", zxdg_decoration_manager_v1_interface.name);
+   }
+
+   if (!wl->viewporter)
+   {
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", wp_viewporter_interface.name);
+   }
+
+   if (!wl->fractional_scale_manager)
+   {
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", wp_fractional_scale_manager_v1_interface.name);
+   }
+
+   if (!wl->cursor_shape_manager)
+   {
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", wp_cursor_shape_manager_v1_interface.name);
+   }
+
+   if (!wl->content_type_manager)
+   {
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", wp_content_type_manager_v1_interface.name);
+   }
+
+   if (!wl->pointer_constraints)
+   {
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", zwp_pointer_constraints_v1_interface.name);
+   }
+
+   if (!wl->relative_pointer_manager)
+   {
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", zwp_relative_pointer_manager_v1_interface.name);
    }
 
    wl->surface = wl_compositor_create_surface(wl->compositor);
    if (wl->viewporter)
       wl->viewport = wp_viewporter_get_viewport(wl->viewporter, wl->surface);
+
    if (wl->fractional_scale_manager)
    {
       wl->fractional_scale = wp_fractional_scale_manager_v1_get_fractional_scale(
            wl->fractional_scale_manager, wl->surface);
       wp_fractional_scale_v1_add_listener(wl->fractional_scale, &wp_fractional_scale_v1_listener, wl);
-      RARCH_LOG("[Wayland]: fractional_scale_v1 enabled\n");
+   }
+
+   if (wl->content_type_manager)
+   {
+      wl->content_type = wp_content_type_manager_v1_get_surface_content_type(wl->content_type_manager, wl->surface);
+      wp_content_type_v1_set_content_type(wl->content_type, WP_CONTENT_TYPE_V1_TYPE_GAME);
    }
 
    wl_surface_add_listener(wl->surface, &wl_surface_listener, wl);

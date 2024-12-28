@@ -1335,8 +1335,8 @@ bool playlist_push(playlist_t *playlist,
    if (string_is_empty(core_name))
    {
       static char base_path[NAME_MAX_LENGTH] = {0};
-      fill_pathname_base(base_path, real_core_path, sizeof(base_path));
-      path_remove_extension(base_path);
+      fill_pathname(base_path, path_basename(real_core_path), "",
+            sizeof(base_path));
 
       core_name = base_path;
 
@@ -2837,12 +2837,12 @@ static bool playlist_read_file(playlist_t *playlist)
                   {
                      /* Right thumbnail mode */
                      unsigned thumbnail_mode = string_to_unsigned(elem0);
-                     if (thumbnail_mode <= PLAYLIST_THUMBNAIL_MODE_BOXARTS)
+                     if (thumbnail_mode <= PLAYLIST_THUMBNAIL_MODE_LOGOS)
                         playlist->right_thumbnail_mode = (enum playlist_thumbnail_mode)thumbnail_mode;
 
                      /* Left thumbnail mode */
                      thumbnail_mode = string_to_unsigned(tok);
-                     if (thumbnail_mode <= PLAYLIST_THUMBNAIL_MODE_BOXARTS)
+                     if (thumbnail_mode <= PLAYLIST_THUMBNAIL_MODE_LOGOS)
                         playlist->left_thumbnail_mode = (enum playlist_thumbnail_mode)thumbnail_mode;
                   }
                   free(elem0);

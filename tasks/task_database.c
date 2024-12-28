@@ -124,9 +124,9 @@ static void task_database_scan_console_output(const char *label, const char *db_
       unsigned reset  = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
       size_t _len     = strlcpy(string, " ", sizeof(string));
       _len += strlcpy(string + _len, prefix, sizeof(string) - _len);
-      strlcpy(string + _len, " ", sizeof(string) - _len);
+      _len += strlcpy(string + _len, " ",    sizeof(string) - _len);
       SetConsoleTextAttribute(con, (add) ? green : (db_name) ? yellow : red);
-      WriteConsole(con, string, strlen(string), NULL, NULL);
+      WriteConsole(con, string, _len, NULL, NULL);
       SetConsoleTextAttribute(con, reset);
    }
 #else
@@ -790,10 +790,7 @@ static int database_info_list_iterate_found_match(
    entry_path_str[0]              = '\0';
 
    fill_pathname(db_playlist_base_str,
-         path_basename_nocompression(db_path), "", str_len);
-   path_remove_extension(db_playlist_base_str);
-
-   strlcat(db_playlist_base_str, ".lpl", sizeof(db_playlist_base_str));
+         path_basename_nocompression(db_path), ".lpl", str_len);
 
    if (!string_is_empty(_db->playlist_directory))
       fill_pathname_join_special(db_playlist_path, _db->playlist_directory,
@@ -827,7 +824,6 @@ static int database_info_list_iterate_found_match(
          *delim = '\0';
       fill_pathname(entry_lbl,
             path_basename_nocompression(entry_path), "", str_len);
-      path_remove_extension(entry_lbl);
 
       RARCH_LOG("[Scanner]: No match for: \"%s\", CRC: 0x%08X\n", entry_path_str, db_state->crc);
    }
@@ -1049,7 +1045,6 @@ static int task_database_iterate_playlist_lutro(
       char game_title[NAME_MAX_LENGTH];
       fill_pathname(game_title,
             path_basename(path), "", sizeof(game_title));
-      path_remove_extension(game_title);
 
       /* the push function reads our entry as const,
        * so these casts are safe */
