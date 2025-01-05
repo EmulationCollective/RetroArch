@@ -772,7 +772,7 @@ static int menu_displaylist_parse_core_info(
        * adjust the path to check for firmware files */
       if (systemfiles_in_content_dir && content_is_inited)
       {
-         fill_pathname_basedir(tmp_path,
+         size_t __len = fill_pathname_basedir(tmp_path,
                path_get(RARCH_PATH_CONTENT),
                sizeof(tmp_path));
 
@@ -781,7 +781,6 @@ static int menu_displaylist_parse_core_info(
             firmware_info.directory.system = settings->paths.directory_system;
          else
          {
-            size_t __len = strlen(tmp_path);
             /* Removes trailing slash (unless root dir), doesn't really matter
              * but it's more consistent with how the path is stored and
              * displayed without 'System Files are in Content Directory' */
@@ -867,12 +866,15 @@ static int menu_displaylist_parse_core_info(
             /* Show relevant note row and skip showing it later */
             if (core_info->notes)
             {
+               int spc;
                unsigned j;
                char firmware_basename[64];
                fill_pathname_base(firmware_basename,
                      core_info->firmware[i].desc, sizeof(firmware_basename));
 
-               firmware_basename[string_find_index_substring_string(firmware_basename, " ")] = '\0';
+               spc = string_find_index_substring_string(firmware_basename, " ");
+               if (spc >= 0)
+                  firmware_basename[spc] = '\0';
 
                for (j = 0; j < core_info->note_list->size; j++)
                {
@@ -10181,6 +10183,7 @@ unsigned menu_displaylist_build_list(
                {MENU_ENUM_LABEL_INPUT_OVERLAY_SHOW_MOUSE_CURSOR,           PARSE_ONLY_BOOL,  false },
                {MENU_ENUM_LABEL_INPUT_OVERLAY_DPAD_DIAGONAL_SENSITIVITY,   PARSE_ONLY_UINT,  false },
                {MENU_ENUM_LABEL_INPUT_OVERLAY_ABXY_DIAGONAL_SENSITIVITY,   PARSE_ONLY_UINT,  false },
+               {MENU_ENUM_LABEL_INPUT_OVERLAY_ANALOG_RECENTER_ZONE,        PARSE_ONLY_UINT,  false },
                {MENU_ENUM_LABEL_INPUT_OVERLAY_AUTO_ROTATE,                 PARSE_ONLY_BOOL,  false },
                {MENU_ENUM_LABEL_INPUT_OVERLAY_AUTO_SCALE,                  PARSE_ONLY_BOOL,  false },
                {MENU_ENUM_LABEL_OVERLAY_SCALE_LANDSCAPE,                   PARSE_ONLY_FLOAT, false },
@@ -10247,6 +10250,12 @@ unsigned menu_displaylist_build_list(
                   case MENU_ENUM_LABEL_INPUT_OVERLAY_ABXY_DIAGONAL_SENSITIVITY:
                      if (input_overlay_enable &&
                          BIT16_GET(menu_st->overlay_types, OVERLAY_TYPE_ABXY_AREA))
+                        build_list[i].checked = true;
+                     break;
+                  case MENU_ENUM_LABEL_INPUT_OVERLAY_ANALOG_RECENTER_ZONE:
+                     if (input_overlay_enable &&
+                         (BIT16_GET(menu_st->overlay_types, OVERLAY_TYPE_ANALOG_LEFT)
+                          || BIT16_GET(menu_st->overlay_types, OVERLAY_TYPE_ANALOG_RIGHT)))
                         build_list[i].checked = true;
                      break;
                   case MENU_ENUM_LABEL_OVERLAY_LIGHTGUN_SETTINGS:

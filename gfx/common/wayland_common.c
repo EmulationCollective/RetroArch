@@ -43,6 +43,10 @@
 #define DEFAULT_WINDOWED_WIDTH 640
 #define DEFAULT_WINDOWED_HEIGHT 480
 
+/* Icon is 16x15 scaled by 16 */
+#define SPLASH_WINDOW_WIDTH 240
+#define SPLASH_WINDOW_HEIGHT 256
+
 #ifndef MFD_CLOEXEC
 #define MFD_CLOEXEC		0x0001U
 #endif
@@ -319,6 +323,8 @@ void gfx_ctx_wl_destroy_resources_common(gfx_ctx_wayland_data_t *wl)
       wp_cursor_shape_manager_v1_destroy (wl->cursor_shape_manager);
    if (wl->cursor_shape_device)
       wp_cursor_shape_device_v1_destroy (wl->cursor_shape_device);
+   if (wl->single_pixel_manager)
+      wp_single_pixel_buffer_manager_v1_destroy (wl->single_pixel_manager);
    if (wl->seat)
       wl_seat_destroy(wl->seat);
    if (wl->xdg_shell)
@@ -372,6 +378,7 @@ void gfx_ctx_wl_destroy_resources_common(gfx_ctx_wayland_data_t *wl)
    wl->cursor_shape_device      = NULL;
    wl->idle_inhibit_manager     = NULL;
    wl->deco_manager             = NULL;
+   wl->single_pixel_manager     = NULL;
    wl->surface                  = NULL;
    wl->xdg_surface              = NULL;
    wl->xdg_toplevel             = NULL;
@@ -544,7 +551,7 @@ static shm_buffer_t *create_shm_buffer(gfx_ctx_wayland_data_t *wl, int width,
    buffer->data      = data;
    buffer->data_size = size;
 
-   return buffer;
+      return buffer;
 }
 
 static void shm_buffer_paint_icon(
@@ -610,27 +617,47 @@ static void shm_buffer_paint_checkerboard(
 
 static bool wl_draw_splash_screen(gfx_ctx_wayland_data_t *wl)
 {
-   shm_buffer_t *buffer = create_shm_buffer(wl,
-      wl->buffer_width,
-      wl->buffer_height,
-      WL_SHM_FORMAT_XRGB8888);
+   if (wl->single_pixel_manager)
+   {
+      struct wl_buffer *buffer = NULL;
+      buffer = wp_single_pixel_buffer_manager_v1_create_u32_rgba_buffer(
+         wl->single_pixel_manager, 0, 0, 0, UINT32_MAX);
 
-   if (!buffer)
-     return false;
+      if (!buffer)
+         return false;
 
-   shm_buffer_paint_checkerboard(buffer, wl->buffer_width,
-      wl->buffer_height, 1,
-      8, 0xffbcbcbc, 0xff8e8e8e);
-   shm_buffer_paint_icon(buffer, wl->buffer_width,
-      wl->buffer_height, 1,
-      16);
+      wl_surface_attach(wl->surface, buffer, 0, 0);
+   }
+   else
+   {
+      shm_buffer_t *buffer = create_shm_buffer(wl,
+         wl->buffer_width,
+         wl->buffer_height,
+         WL_SHM_FORMAT_XRGB8888);
 
-   wl_surface_attach(wl->surface, buffer->wl_buffer, 0, 0);
+      if (!buffer)
+         return false;
+
+      shm_buffer_paint_checkerboard(buffer, wl->buffer_width,
+         wl->buffer_height, 1,
+         8, 0xffbcbcbc, 0xff8e8e8e);
+      shm_buffer_paint_icon(buffer, wl->buffer_width,
+         wl->buffer_height, 1,
+         16);
+
+      wl_surface_attach(wl->surface, buffer->wl_buffer, 0, 0);
+   }
+
    if (wl_surface_get_version(wl->surface) >= WL_SURFACE_DAMAGE_BUFFER_SINCE_VERSION)
       wl_surface_damage_buffer(wl->surface, 0, 0,
          wl->buffer_width,
          wl->buffer_height);
+
+   if (wl->viewport)
+      wp_viewport_set_destination(wl->viewport, wl->width, wl->height);
+
    wl_surface_commit(wl->surface);
+
    return true;
 }
 
@@ -744,6 +771,11 @@ bool gfx_ctx_wl_init_common(
    if (!wl->relative_pointer_manager)
    {
       RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", zwp_relative_pointer_manager_v1_interface.name);
+   }
+
+   if (!wl->single_pixel_manager)
+   {
+      RARCH_LOG("[Wayland]: Compositor doesn't support the %s protocol!\n", wp_single_pixel_buffer_manager_v1_interface.name);
    }
 
    wl->surface = wl_compositor_create_surface(wl->compositor);
@@ -902,12 +934,12 @@ bool gfx_ctx_wl_set_video_mode_common_size(gfx_ctx_wayland_data_t *wl,
    {
       /* Stretch old buffer to fill new size, commit/roundtrip to apply */
       wp_viewport_set_destination(wl->viewport, wl->width, wl->height);
-      wl_surface_commit(wl->surface);
    }
 
 #ifdef HAVE_LIBDECOR_H
    if (wl->libdecor)
    {
+     wl->libdecor_frame_set_visibility(wl->libdecor_frame, !fullscreen);
      struct libdecor_state *state = wl->libdecor_state_new(wl->width, wl->height);
      wl->libdecor_frame_commit(wl->libdecor_frame, state, NULL);
      wl->libdecor_state_free(state);

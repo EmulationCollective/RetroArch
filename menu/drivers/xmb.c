@@ -1139,7 +1139,7 @@ static void xmb_render_messagebox_internal(
    string_list_deinitialize(&list);
 }
 
-static char* xmb_path_dynamic_wallpaper(xmb_handle_t *xmb)
+static char *xmb_path_dynamic_wallpaper(xmb_handle_t *xmb)
 {
    char path[PATH_MAX_LENGTH];
    settings_t *settings               = config_get_ptr();
@@ -1163,17 +1163,17 @@ static char* xmb_path_dynamic_wallpaper(xmb_handle_t *xmb)
    if (settings->bools.menu_dynamic_wallpaper_enable)
    {
       const char *dir_dynamic_wallpapers = settings->paths.directory_dynamic_wallpapers;
-      size_t len = fill_pathname_join_special(
+      size_t _len = fill_pathname_join_special(
                path,
                dir_dynamic_wallpapers,
                xmb->title_name,
                sizeof(path));
 
-      path[  len] = '.';
-      path[++len] = 'p';
-      path[++len] = 'n';
-      path[++len] = 'g';
-      path[++len] = '\0';
+      path[  _len] = '.';
+      path[++_len] = 'p';
+      path[++_len] = 'n';
+      path[++_len] = 'g';
+      path[++_len] = '\0';
    }
 
    if (!string_is_empty(path) && path_is_valid(path))

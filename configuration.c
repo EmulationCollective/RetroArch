@@ -2514,6 +2514,7 @@ static struct config_uint_setting *populate_settings_uint(
    SETTING_UINT("input_overlay_show_inputs_port",          &settings->uints.input_overlay_show_inputs_port, true, DEFAULT_OVERLAY_SHOW_INPUTS_PORT, false);
    SETTING_UINT("input_overlay_dpad_diagonal_sensitivity", &settings->uints.input_overlay_dpad_diagonal_sensitivity, true, DEFAULT_OVERLAY_DPAD_DIAGONAL_SENSITIVITY, false);
    SETTING_UINT("input_overlay_abxy_diagonal_sensitivity", &settings->uints.input_overlay_abxy_diagonal_sensitivity, true, DEFAULT_OVERLAY_ABXY_DIAGONAL_SENSITIVITY, false);
+   SETTING_UINT("input_overlay_analog_recenter_zone",      &settings->uints.input_overlay_analog_recenter_zone, true, DEFAULT_INPUT_OVERLAY_ANALOG_RECENTER_ZONE, false);
 #endif
 
 #ifdef HAVE_LIBNX
@@ -4814,9 +4815,9 @@ static void save_keybind_joykey(config_file_t *conf,
       const struct retro_keybind *bind, bool save_empty)
 {
    char key[64];
-   size_t len = fill_pathname_join_delim(key, prefix,
+   size_t _len = fill_pathname_join_delim(key, prefix,
          base, '_', sizeof(key));
-   strlcpy(key + len, "_btn", sizeof(key) - len);
+   strlcpy(key + _len, "_btn", sizeof(key) - _len);
 
    if (bind->joykey == NO_BTN)
    {
@@ -4835,8 +4836,8 @@ static void save_keybind_axis(config_file_t *conf,
       const struct retro_keybind *bind, bool save_empty)
 {
    char key[64];
-   size_t len = fill_pathname_join_delim(key, prefix, base, '_', sizeof(key));
-   strlcpy(key + len, "_axis", sizeof(key) - len);
+   size_t _len = fill_pathname_join_delim(key, prefix, base, '_', sizeof(key));
+   strlcpy(key + _len, "_axis", sizeof(key) - _len);
 
    if (bind->joyaxis == AXIS_NONE)
    {
@@ -4869,9 +4870,9 @@ static void save_keybind_mbutton(config_file_t *conf,
       const struct retro_keybind *bind, bool save_empty)
 {
    char key[64];
-   size_t len = fill_pathname_join_delim(key, prefix,
+   size_t _len = fill_pathname_join_delim(key, prefix,
       base, '_', sizeof(key));
-   strlcpy(key + len, "_mbtn", sizeof(key) - len);
+   strlcpy(key + _len, "_mbtn", sizeof(key) - _len);
 
    switch (bind->mbutton)
    {
@@ -6389,7 +6390,7 @@ void input_config_parse_mouse_button(
 
    fill_pathname_join_delim(key, s, "mbtn", '_', sizeof(key));
 
-   if (config_get_array(conf, key, tmp, sizeof(tmp)) > 0)
+   if (config_get_array(conf, key, tmp, sizeof(tmp)))
    {
       bind->mbutton = NO_BTN;
 
@@ -6460,7 +6461,7 @@ void input_config_parse_joy_axis(
    fill_pathname_join_delim(key_label, s,
          "axis_label", '_', sizeof(key_label));
 
-   if (config_get_array(conf, key, tmp, sizeof(tmp)) > 0)
+   if (config_get_array(conf, key, tmp, sizeof(tmp)))
    {
       if (     tmp[0] == 'n'
             && tmp[1] == 'u'
@@ -6551,7 +6552,7 @@ void input_config_parse_joy_button(
    fill_pathname_join_delim(key_label, s,
          "btn_label", '_', sizeof(key_label));
 
-   if (config_get_array(conf, key, tmp, sizeof(tmp)) > 0)
+   if (config_get_array(conf, key, tmp, sizeof(tmp)))
    {
       btn = tmp;
       if (     btn[0] == 'n'

@@ -3277,7 +3277,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_AUDIO_STREAM_STATE_NONE,
-   "Стан : Н/В"
+   "Стан: Н/Д"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_AUDIO_STREAM_STATE_STOPPED,
@@ -3285,15 +3285,15 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_AUDIO_STREAM_STATE_PLAYING,
-   "Стан: Гра"
+   "Стан: грає"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_AUDIO_STREAM_STATE_PLAYING_LOOPED,
-   "Стан : Гра (циклічно)"
+   "Стан: відтворення (зациклено)"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_AUDIO_STREAM_STATE_PLAYING_SEQUENTIAL,
-   "Стан : Гра (послідовно)"
+   "Стан: відтворення (послідовне)"
    )
 
 /* Settings > Audio > Menu Sounds */
@@ -5373,6 +5373,14 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_OVERLAY_ABXY_DIAGONAL_SENSITIVITY,
    "Регулювання розміру зон перекриття у вигляді кнопки обличчя діамант. Встановіть на 100% для 8-сторонньої симетрії."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_INPUT_OVERLAY_ANALOG_RECENTER_ZONE,
+   "Аналоговий переробна зона"
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_INPUT_OVERLAY_ANALOG_RECENTER_ZONE,
+   "Введення аналогової стрілки буде відноситись до першого дотику, якщо натиснуто в цій зоні."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_OVERLAY,

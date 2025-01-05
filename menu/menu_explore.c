@@ -844,7 +844,7 @@ static void explore_append_title(char *s, size_t len,
    va_list ap;
    size_t _len = strlen(s);
    va_start(ap, fmt);
-   vsnprintf(s + len, len - _len, fmt, ap);
+   vsnprintf(s + _len, len - _len, fmt, ap);
    va_end(ap);
 }
 
@@ -1680,8 +1680,7 @@ SKIP_ENTRY:;
       const struct playlist_entry *pl_entry =
          state->entries[current_type - EXPLORE_TYPE_FIRSTITEM].playlist_entry;
 
-      strlcpy(state->title,
-            pl_entry->label, sizeof(state->title));
+      strlcpy(state->title, pl_entry->label, sizeof(state->title));
 
       for (pl_idx = 0; pl_idx != (int)RBUF_LEN(state->playlists); pl_idx++)
       {
