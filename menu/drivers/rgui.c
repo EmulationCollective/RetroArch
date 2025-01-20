@@ -31,9 +31,9 @@
 #include <file/config_file.h>
 #include <file/file_path.h>
 #include <formats/image.h>
-
-#include <retro_inline.h>
 #include <gfx/scaler/scaler.h>
+#include <retro_inline.h>
+#include <retro_math.h>
 
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
@@ -47,21 +47,22 @@
 
 #include "../menu_driver.h"
 #include "../../gfx/gfx_animation.h"
-
-#include "../../input/input_osk.h"
+#include "../../gfx/gfx_thumbnail_path.h"
 
 #include "../../configuration.h"
 #include "../../file_path_special.h"
-#include "../../gfx/drivers_font_renderer/bitmap.h"
+#include "../../input/input_osk.h"
+#include "../../tasks/tasks_internal.h"
 
+#include "../../gfx/drivers_font_renderer/bitmap.h"
 #ifdef HAVE_LANGEXTRA
 #include "../../gfx/drivers_font_renderer/bitmapfont_10x10.h"
 #include "../../gfx/drivers_font_renderer/bitmapfont_6x10.h"
 #endif
 
-/* Thumbnail additions */
-#include "../../gfx/gfx_thumbnail_path.h"
-#include "../../tasks/tasks_internal.h"
+#ifdef HAVE_AUDIOMIXER
+#include "../../audio/audio_driver.h"
+#endif
 
 #if defined(GEKKO)
 /* Required for the Wii build, since we have
@@ -1649,9 +1650,9 @@ static void rgui_fill_rect(
     * this function is frequently used to fill large areas.
     * We therefore gain significant performance benefits
     * from using memcpy() tricks... */
-   unsigned x_end  = (x_end_i <= fb_width)  ? x_end_i : fb_width;
-   unsigned y_end  = (y_end_i <= fb_height) ? y_end_i : fb_height;
-   size_t x_size   = (x_end - x_start) * sizeof(uint16_t);
+   unsigned x_end   = (x_end_i <= fb_width)  ? x_end_i : fb_width;
+   unsigned y_end   = (y_end_i <= fb_height) ? y_end_i : fb_height;
+   size_t x_size    = (x_end - x_start) * sizeof(uint16_t);
 
    /* Sanity check */
    if (x_size == 0)
@@ -4930,6 +4931,8 @@ static enum rgui_entry_value_type rgui_get_entry_value_type(
                   string_is_equal(entry_value, msg_hash_to_str(MENU_ENUM_LABEL_VALUE_ON)))
             return RGUI_ENTRY_VALUE_SWITCH_ON;
       }
+      else if (string_is_equal(entry_value, "(RDB)"))
+         return RGUI_ENTRY_VALUE_NONE;
       return RGUI_ENTRY_VALUE_TEXT;
    }
    else if (entry_checked)
@@ -4962,17 +4965,14 @@ static bool gfx_thumbnail_get_label(
    return true;
 }
 
-static void rgui_render(
-      void *data,
-      unsigned width,
-      unsigned height,
+static void rgui_render(void *data, unsigned width, unsigned height,
       bool is_idle)
 {
-   gfx_animation_ctx_ticker_t ticker;
-   gfx_animation_ctx_ticker_smooth_t ticker_smooth;
    unsigned x, y;
-   size_t i, end, fb_pitch, old_start, new_start;
    unsigned fb_width, fb_height;
+   gfx_animation_ctx_ticker_t ticker;
+   size_t i, end, fb_pitch, old_start, new_start;
+   gfx_animation_ctx_ticker_smooth_t ticker_smooth;
    static bool display_kb         = false;
    static const char* const
       ticker_spacer               = RGUI_TICKER_SPACER;
@@ -5288,11 +5288,11 @@ static void rgui_render(
    else
    {
       /* Render usual text */
-      size_t selection               = menu_st->selection_ptr;
-      size_t title_max_len;
-      size_t title_len;
       unsigned title_x;
+      size_t title_len;
+      size_t title_max_len;
       char title_buf[NAME_MAX_LENGTH];
+      size_t selection               = menu_st->selection_ptr;
       unsigned title_y               = rgui->term_layout.start_y - rgui->font_height_stride;
       unsigned term_end_x            = rgui->term_layout.start_x + (rgui->term_layout.width * rgui->font_width_stride);
       unsigned timedate_x            = term_end_x - (5 * rgui->font_width_stride);
@@ -7156,6 +7156,58 @@ static void rgui_refresh_thumbnail_image(void *userdata, unsigned i)
    }
 }
 
+static void rgui_action_switch_thumbnail(rgui_t *rgui)
+{
+   settings_t *settings = config_get_ptr();
+
+   if (settings->uints.gfx_thumbnails == 0)
+   {
+      configuration_set_uint(settings,
+            settings->uints.menu_left_thumbnails,
+            settings->uints.menu_left_thumbnails + 1);
+
+      if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
+            && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
+         configuration_set_uint(settings,
+               settings->uints.menu_left_thumbnails,
+               settings->uints.menu_left_thumbnails + 1);
+
+      if (settings->uints.menu_left_thumbnails > 3)
+         configuration_set_uint(settings,
+               settings->uints.menu_left_thumbnails, 1);
+
+      if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
+            && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
+         configuration_set_uint(settings,
+               settings->uints.menu_left_thumbnails,
+               settings->uints.menu_left_thumbnails + 1);
+   }
+   else
+   {
+      configuration_set_uint(settings,
+            settings->uints.gfx_thumbnails,
+            settings->uints.gfx_thumbnails + 1);
+
+      if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
+            && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
+         configuration_set_uint(settings,
+               settings->uints.gfx_thumbnails,
+               settings->uints.gfx_thumbnails + 1);
+
+      if (settings->uints.gfx_thumbnails > 3)
+         configuration_set_uint(settings,
+               settings->uints.gfx_thumbnails, 1);
+
+      if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
+            && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
+         configuration_set_uint(settings,
+               settings->uints.gfx_thumbnails,
+               settings->uints.gfx_thumbnails + 1);
+   }
+
+   rgui_refresh_thumbnail_image(rgui, 0);
+}
+
 static void rgui_update_menu_sublabel(rgui_t *rgui, size_t selection)
 {
    menu_entry_t entry;
@@ -7166,7 +7218,7 @@ static void rgui_update_menu_sublabel(rgui_t *rgui, size_t selection)
 
    if (!string_is_empty(entry.sublabel))
    {
-      char *tok, *save;
+      char *tok, *save         = NULL;
       static const char* const
          sublabel_spacer       = RGUI_TICKER_SPACER;
       bool prev_line_empty     = true;
@@ -7300,7 +7352,11 @@ static void rgui_populate_entries(
    /* Check whether we are currently viewing a playlist */
    if (     string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_PLAYLIST_LIST))
          || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_LOAD_CONTENT_HISTORY))
-         || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_FAVORITES_LIST)))
+         || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_FAVORITES_LIST))
+         || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_IMAGES_LIST))
+         || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_MUSIC_LIST))
+         || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_VIDEO_LIST))
+      )
       rgui->flags |=  RGUI_FLAG_IS_PLAYLIST;
    else
       rgui->flags &= ~RGUI_FLAG_IS_PLAYLIST;
@@ -7309,12 +7365,6 @@ static void rgui_populate_entries(
       rgui->flags |=  RGUI_FLAG_IS_PLAYLISTS_TAB;
    else
       rgui->flags &= ~RGUI_FLAG_IS_PLAYLISTS_TAB;
-
-   if (     string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_EXPLORE_LIST))
-         || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_EXPLORE_TAB)))
-      rgui->flags |=  RGUI_FLAG_IS_EXPLORE_LIST;
-   else
-      rgui->flags &= ~RGUI_FLAG_IS_EXPLORE_LIST;
 
    /* Determine whether this is the quick menu */
    if (     string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_RPL_ENTRY_ACTIONS))
@@ -7329,25 +7379,32 @@ static void rgui_populate_entries(
    else
       rgui->flags &= ~RGUI_FLAG_IS_STATE_SLOT;
 
+#if defined(HAVE_LIBRETRODB)
+   if (     string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_EXPLORE_LIST))
+         || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_EXPLORE_TAB)))
+      rgui->flags |=  RGUI_FLAG_IS_EXPLORE_LIST;
+   else
+      rgui->flags &= ~RGUI_FLAG_IS_EXPLORE_LIST;
+
    /* Quick Menu under Explore list must also be Quick Menu */
    if (rgui->flags & RGUI_FLAG_IS_EXPLORE_LIST)
    {
       menu_entry_t entry;
-
       MENU_ENTRY_INITIALIZE(entry);
-      entry.flags |= MENU_ENTRY_FLAG_LABEL_ENABLED
-         | MENU_ENTRY_FLAG_RICH_LABEL_ENABLED;
+      entry.flags |= MENU_ENTRY_FLAG_LABEL_ENABLED;
       menu_entry_get(&entry, 0, 0, NULL, true);
 
       /* Quick Menu under Explore list must also be Quick Menu */
-      if (      string_is_equal(entry.label, "collection")
-            || (string_is_equal(entry.label, "resume_content")
-            ||  string_is_equal(entry.label, "state_slot"))
+      if (     string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_RUN))
+            || string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_RESUME_CONTENT))
+            || string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_STATE_SLOT))
          )
-         rgui->flags |= RGUI_FLAG_IS_QUICK_MENU;
-      if (rgui->flags & RGUI_FLAG_IS_QUICK_MENU)
+      {
+         rgui->flags |=  RGUI_FLAG_IS_QUICK_MENU;
          rgui->flags &= ~RGUI_FLAG_IS_EXPLORE_LIST;
+      }
    }
+#endif
 
    /* Set menu title */
    menu_entries_get_title(rgui->menu_title, sizeof(rgui->menu_title));
@@ -7458,16 +7515,12 @@ static int rgui_environ(
 
 /* Forward declaration */
 static int rgui_menu_entry_action(
-      void *userdata,
-      menu_entry_t *entry,
-      size_t i,
-      enum menu_action action);
+      void *userdata, menu_entry_t *entry,
+      size_t i, enum menu_action action);
 
 static int rgui_pointer_up(
       void *data,
-      unsigned x,
-      unsigned y,
-      unsigned ptr,
+      unsigned x, unsigned y, unsigned ptr,
       enum menu_input_pointer_gesture gesture,
       menu_file_list_cbs_t *cbs,
       menu_entry_t *entry,
@@ -7932,7 +7985,8 @@ static void rgui_thumbnail_cycle_dupe(rgui_t *rgui)
 }
 
 static enum menu_action rgui_parse_menu_entry_action(
-      rgui_t *rgui, menu_entry_t *entry,
+      rgui_t *rgui,
+      menu_entry_t *entry,
       enum menu_action action)
 {
    enum menu_action new_action = action;
@@ -8056,6 +8110,81 @@ static enum menu_action rgui_parse_menu_entry_action(
          }
          break;
       case MENU_ACTION_SCAN:
+         if (rgui->flags & RGUI_FLAG_IS_PLAYLISTS_TAB)
+         {
+            struct menu_state *menu_st = menu_state_get_ptr();
+            size_t selection_total     = menu_st->entries.list ? MENU_LIST_GET_SELECTION(menu_st->entries.list, 0)->size : 0;
+            size_t selection           = menu_st->selection_ptr;
+            size_t new_selection       = random_range(0, selection_total - 1);
+            menu_entry_t entry_new;
+
+            MENU_ENTRY_INITIALIZE(entry_new);
+            menu_entry_get(&entry_new, 0, new_selection, NULL, false);
+            /* Keep randomizing until selection is a fresh playlist */
+            while (new_selection == selection || entry_new.type != FILE_TYPE_PLAYLIST_COLLECTION)
+            {
+               new_selection = random_range(0, selection_total - 1);
+               menu_entry_get(&entry_new, 0, new_selection, NULL, false);
+            }
+
+            if (new_selection != selection)
+            {
+               menu_st->selection_ptr = new_selection;
+               if (menu_st->driver_ctx->navigation_set)
+                  menu_st->driver_ctx->navigation_set(menu_st->userdata, true);
+            }
+
+            new_action = MENU_ACTION_NOOP;
+
+#ifdef HAVE_AUDIOMIXER
+            if (new_selection != selection)
+               audio_driver_mixer_play_scroll_sound(true);
+#endif
+            break;
+         }
+         else if ((rgui->flags & RGUI_FLAG_IS_PLAYLIST)
+               || (rgui->flags & RGUI_FLAG_IS_EXPLORE_LIST))
+         {
+            struct menu_state *menu_st = menu_state_get_ptr();
+            size_t selection_start     = 0;
+            size_t selection_total     = menu_st->entries.list ? MENU_LIST_GET_SELECTION(menu_st->entries.list, 0)->size : 0;
+            size_t selection           = menu_st->selection_ptr;
+            size_t new_selection       = selection;
+
+            /* Skip header items (Search Name + Add Additional Filter + Save as View) */
+            if (rgui->flags & RGUI_FLAG_IS_EXPLORE_LIST)
+            {
+               menu_entry_t entry;
+               MENU_ENTRY_INITIALIZE(entry);
+               menu_entry_get(&entry, 0, 0, NULL, true);
+
+               if (entry.type == MENU_SETTINGS_LAST + 1)
+                  selection_start = 1;
+               else if (entry.type == FILE_TYPE_RDB)
+                  selection_start = 2;
+            }
+
+            new_selection = random_range(selection_start, selection_total - 1);
+
+            while (new_selection == selection && selection_start != selection_total - 1)
+               new_selection = random_range(selection_start, selection_total - 1);
+
+            if (new_selection != selection)
+            {
+               menu_st->selection_ptr = new_selection;
+               if (menu_st->driver_ctx->navigation_set)
+                  menu_st->driver_ctx->navigation_set(menu_st->userdata, true);
+            }
+
+            new_action = MENU_ACTION_NOOP;
+
+#ifdef HAVE_AUDIOMIXER
+            if (new_selection != selection)
+               audio_driver_mixer_play_scroll_sound(true);
+#endif
+            break;
+         }
+
          /* Save state slot fullscreen toggle */
          if (     ((rgui->flags & RGUI_FLAG_IS_STATE_SLOT) || (rgui->flags & RGUI_FLAG_IS_QUICK_MENU))
                && !string_is_empty(rgui->savestate_thumbnail_file_path))
@@ -8063,59 +8192,14 @@ static enum menu_action rgui_parse_menu_entry_action(
             rgui_toggle_fs_thumbnail(rgui, true);
             new_action = MENU_ACTION_NOOP;
          }
+         break;
+      case MENU_ACTION_SEARCH:
          /* Playlist thumbnail cycle */
-         else if ((rgui->flags & RGUI_FLAG_IS_PLAYLIST)
-               || (rgui->flags & RGUI_FLAG_IS_EXPLORE_LIST)
-               || (rgui->flags & RGUI_FLAG_IS_QUICK_MENU))
+         if (     (rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL)
+               || ((rgui->flags & RGUI_FLAG_IS_QUICK_MENU) && !menu_is_running_quick_menu()))
          {
-            settings_t *settings = config_get_ptr();
-
-            if (settings->uints.gfx_thumbnails == 0)
-            {
-               configuration_set_uint(settings,
-                     settings->uints.menu_left_thumbnails,
-                     settings->uints.menu_left_thumbnails + 1);
-
-               if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
-                     && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
-                  configuration_set_uint(settings,
-                        settings->uints.menu_left_thumbnails,
-                        settings->uints.menu_left_thumbnails + 1);
-
-               if (settings->uints.menu_left_thumbnails > 3)
-                  configuration_set_uint(settings,
-                        settings->uints.menu_left_thumbnails, 1);
-
-               if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
-                     && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
-                  configuration_set_uint(settings,
-                        settings->uints.menu_left_thumbnails,
-                        settings->uints.menu_left_thumbnails + 1);
-            }
-            else
-            {
-               configuration_set_uint(settings,
-                     settings->uints.gfx_thumbnails,
-                     settings->uints.gfx_thumbnails + 1);
-
-               if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
-                     && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
-                  configuration_set_uint(settings,
-                        settings->uints.gfx_thumbnails,
-                        settings->uints.gfx_thumbnails + 1);
-
-               if (settings->uints.gfx_thumbnails > 3)
-                  configuration_set_uint(settings,
-                        settings->uints.gfx_thumbnails, 1);
-
-               if (     (!(rgui->flags & RGUI_FLAG_SHOW_FULLSCREEN_THUMBNAIL))
-                     && (settings->uints.gfx_thumbnails == settings->uints.menu_left_thumbnails))
-                  configuration_set_uint(settings,
-                        settings->uints.gfx_thumbnails,
-                        settings->uints.gfx_thumbnails + 1);
-            }
-
-            rgui_refresh_thumbnail_image(rgui, 0);
+            rgui_action_switch_thumbnail(rgui);
+            new_action = MENU_ACTION_NOOP;
          }
          break;
       case MENU_ACTION_INFO:
@@ -8156,10 +8240,8 @@ static enum menu_action rgui_parse_menu_entry_action(
 
 /* Menu entry action callback */
 static int rgui_menu_entry_action(
-      void *userdata,
-      menu_entry_t *entry,
-      size_t i,
-      enum menu_action action)
+      void *userdata, menu_entry_t *entry,
+      size_t i, enum menu_action action)
 {
    rgui_t *rgui = (rgui_t*)userdata;
 

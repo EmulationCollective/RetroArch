@@ -727,6 +727,30 @@ MSG_HASH(
    "SDL2 対応"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D8_SUPPORT,
+   "Direct3D 8 対応"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D9_SUPPORT,
+   "Direct3D 9 対応"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D10_SUPPORT,
+   "Direct3D 10 対応"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D11_SUPPORT,
+   "Direct3D 11 対応"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_D3D12_SUPPORT,
+   "Direct3D 12 対応"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_GDI_SUPPORT,
+   "GDI 対応"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_VULKAN_SUPPORT,
    "Vulkan 対応"
    )
@@ -807,6 +831,10 @@ MSG_HASH(
    "PulseAudio 対応"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_PIPEWIRE_SUPPORT,
+   "PipeWire 対応"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_COREAUDIO_SUPPORT,
    "CoreAudio 対応"
    )
@@ -885,6 +913,10 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_V4L2_SUPPORT,
    "Video4Linux2 対応"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "SSL 対応"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
@@ -1935,10 +1967,6 @@ MSG_HASH(
    "黒フレーム挿入"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "フレーム間に黒フレームを挿入します。CRT スキャンをエミュレートすることで残像感を大幅に減らすことができますが、明るさが減少します。1 以上のスワップ間隔 (自動は可)、フレーム遅延または正確なコンテンツフレームレートに同期と組み合わせないでください。"
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
    "フレーム間に黒フレームを挿入し、動きをより鮮明にします。現在のディスプレイのリフレッシュレート用に準備されたオプションのみを使用してください。144Hz、165Hz など、60Hz の倍数ではないリフレッシュレートでは使用できません。1 以上のスワップ間隔、フレーム遅延または正確なフレームレートに同期と組み合わせないでください。"
    )
@@ -2019,10 +2047,6 @@ MSG_HASH(
    "シェーダーサブフレーム"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "フレーム間に追加のシェーダーフレームを挿入します。シェーダーで実際のコンテンツフレームレートよりも高い FPS で動作するエフェクトを実行できるようになります。現在のディスプレイ Hz に対応するオプションを設定する必要があります。1 以上のスワップ間隔、黒フレーム挿入、正確なフレームレートに同期と組み合わせないでください。"
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
    "コンテンツフレームレートよりも高速に動作するように設計されたシェーダー効果用に、フレーム間に追加のシェーダーフレームを挿入します。現在のディスプレイ Hz に対応するオプションのみを使用してください。144Hz、165Hz など、60Hz の倍数ではないリフレッシュレートでは使用できません。"
    )
@@ -2093,10 +2117,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCAN_SUBFRAMES,
    "ループ回転スキャンラインシミュレーション"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "画面を垂直に分割し、サブフレームの数に応じて画面の各部分をレンダリングすることで、複数のサブフレームにわたるブラウン管をカメラで撮影したときのようなループ回転スキャンラインをシミュレートします。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -4427,10 +4447,6 @@ MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_SAVESTATE_BYPASS,
    "コア情報のステートセーブ機能の対応有無を無視"
    )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_CORE_INFO_SAVESTATE_BYPASS,
-   "コア情報のステートセーブ機能の対応有無を無視するかどうかを指定し、関連する機能 (先行実行、巻き戻しなど) を試すことができます。"
-   )
 #ifndef HAVE_DYNAMIC
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_ALWAYS_RELOAD_CORE_ON_RUN_CONTENT,
@@ -4670,10 +4686,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_SAVE,
    "自動ステートセーブ"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "コンテンツを閉じたときに自動的にステートセーブを作成します。[自動ステートロード] が有効になっている場合、RetroArch はこのステートセーブを自動的にロードします。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5816,10 +5828,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_FONT_SIZE,
    "通知のサイズ"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "フォントサイズをポイントで指定します。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -11900,6 +11908,10 @@ MSG_HASH(
    "タイトルスクリーン"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_QT_THUMBNAIL_LOGO,
+   "ロゴ"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_QT_ALL_PLAYLISTS,
    "すべてのプレイリスト"
    )
@@ -13196,10 +13208,6 @@ MSG_HASH(
    "自動検出"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "ステートセーブを自動ロード中 from"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "対応機能"
    )
@@ -14286,6 +14294,10 @@ MSG_HASH(
 MSG_HASH(
    MSG_VIRTUAL_DISK_TRAY_CLOSE,
    "仮想ディスクトレイを閉じることができませんでした。"
+   )
+MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "ステートセーブを自動ロード中 from"
    )
 MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
@@ -15512,10 +15524,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_ENABLE,
    "フォントを有効にする"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
-   "下メニューのフォントを表示します。下画面にボタンの説明を表示することが出来ます。ステートセーブの日付は表示されません。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_RED,

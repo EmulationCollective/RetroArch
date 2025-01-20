@@ -911,6 +911,10 @@ MSG_HASH(
    "Obsługa Video4Linux2"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "Wsparcie SSL"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
    "Obsługa libusb"
    )
@@ -1923,10 +1927,6 @@ MSG_HASH(
    "Wstawianie czarnej klatki"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "Wstaw czarne ramki między ramkami. Może znacznie zmniejszyć rozmycie ruchu poprzez emulowanie skanowania CRT, ale kosztem jasności. Nie łączyć z Interwalem Swap > 1, podramki, ramki Frame lub Synchronizuj z dokładną zawartością."
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
    "Wstawia czarne ramki pomiędzy ramkami w celu zwiększenia jasności ruchu. Użyj opcji tylko dla aktualnego wskaźnika odświeżania ekranu. Nie używać z szybkością odświeżania, które nie są wielokrotnościami 60Hz, takimi jak 144Hz, 165Hz itp. Nie łączyć z Interwalem Swap > 1, podramki, ramki Frame lub Synchronizuj z dokładną zawartością. Pozostawienie systemu VRR jest w porządku, a nie to ustawienie. Jeśli zauważysz dowolne tymczasowe zatrzymanie obrazu, powinieneś wyłącz[...]"
    )
@@ -2007,10 +2007,6 @@ MSG_HASH(
    "Pod-klatki shadera"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "Wstawia dodatkowe klatki shadera pomiędzy klatkami. Umożliwia shaderom wykonywanie efektów, które działają z wyższą liczbą klatek na sekundę niż rzeczywista częstotliwość wyświetlania treści. Powinno być ustawione na bieżące Hz ekranu. Nie łączyć z opcjami Interwał zmiany klatek > 1, BFI, Opóźnienie klatek lub Synchronizuj do dokładnego framerate'u zawartości."
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
    "Wstawia dodatkowe klatki shaderów pomiędzy klatkami dla wszelkich możliwych efektów shaderów, które są zaprojektowane do działania szybciej niż częstotliwość zawartości. Używaj tylko opcji wyznaczonej dla bieżącej częstotliwości odświeżania wyświetlacza. Nie używać przy częstotliwościach odświeżania, które nie są wielokrotnościami 60 Hz, takich jak 144 Hz, 165 Hz itp. Nie łączyć z opcjami Interwał zmiany klatek > 1, BFI, Opóźnienie klatek lub Synchronizuj do d[...]"
    )
@@ -2081,10 +2077,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCAN_SUBFRAMES,
    "Symulacja prześwietlania"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "Symuluje prostą kroczącą linię skanującą na wielu podklatkach poprzez podzielenie ekranu w górę pionowo i renderowanie każdej części ekranu w zależności od liczby podklatek."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2504,10 +2496,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_AXIS,
    "Oś skali całkowitej"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "Skaluj tylko wysokość lub zarówno wysokość, jak i szerokość. Połowa kroków dotyczy źródeł o wysokiej rozdzielczości."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_SMART,
@@ -4079,6 +4067,10 @@ MSG_HASH(
    MENU_ENUM_SUBLABEL_CORE_INFO_CACHE_ENABLE,
    "Utrzymuj stałą lokalną pamięć podręczną zainstalowanych informacji o rdzeniach. Znacznie skraca czas ładowania na platformach z wolnym dostępem do dysku."
    )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_CORE_INFO_SAVESTATE_BYPASS,
+   "Określa, czy zignorować podstawowe informacje zapisują możliwości stanu, pozwalające na eksperymentowanie z powiązanymi funkcjami (uruchamianie z przodu, przewijanie itp.)."
+   )
 #ifndef HAVE_DYNAMIC
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_ALWAYS_RELOAD_CORE_ON_RUN_CONTENT,
@@ -4281,7 +4273,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "Automatycznie utwórz stan zapisu, gdy zawartość jest zamknięta. RetroArch automatycznie załaduje ten stan zapisu, jeśli włączona jest opcja \"Załaduj stan automatycznie\"."
+   "Automatycznie utwórz stan zapisu, gdy zawartość jest zamknięta. Ten stan zapisów jest załadowany przy starcie, jeśli włączony jest \"Automatycznej wczytywanie\"."
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_LOAD,
@@ -5259,7 +5251,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "Określ rozmiar czcionki w punktach."
+   "Określ rozmiar czcionki w punktach. Gdy widżety są używane, ten rozmiar ma wpływ tylko na wyświetlanie statystyk na ekranie."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -11960,10 +11952,6 @@ MSG_HASH(
    "Automatyczne wykrywanie"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "Automatyczne ładowanie stanu zapisu"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "Możliwości"
    )
@@ -12972,6 +12960,10 @@ MSG_HASH(
    "Obliczenie rozmiaru obszaru widoku nie powiodło się! Nadal używane będą surowe dane. To prawdopodobnie nie zadziała dobrze..."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "Automatyczne ładowanie stanu zapisu"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "Automatyczne ładowanie stanu zapisu z \"%s\" nie powiodło się."
    )
@@ -13936,6 +13928,10 @@ MSG_HASH(
 MSG_HASH(
    MSG_3DS_BOTTOM_MENU_LOAD_STATE,
    "Załaduj\nPunkt przywracania"
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
+   "Wyświetlaj czcionkę dolnego menu. Włącz, aby wyświetlić opisy przycisków na dolnym ekranie. Wyklucza to datę zapisu."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_OPACITY,

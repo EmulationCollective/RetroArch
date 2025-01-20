@@ -911,6 +911,10 @@ MSG_HASH(
    "Soporte de Video4Linux2"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "Soporte de SSL"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
    "Soporte de libusb"
    )
@@ -1960,7 +1964,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "Inserta uno o varios fotogramas negros entre fotogramas. Puede reducir en gran medida la distorsión por movimiento (motion blur) emulando el «scan-out» de los monitores CRT a costa de sacrificar brillo. No combinar con un intervalo de intercambio de VSync superior a 1, con subfotogramas, con el retraso de fotogramas o con Sincronizar FPS al contenido."
+   "ADVERTENCIA: los parpadeos rápidos pueden provocar persistencia de la imagen («imágenes fantasma») en algunas pantallas. Utiliza esta opción bajo tu propia responsabilidad. // Inserta uno o varios fotogramas negros entre fotogramas. Puede reducir en gran medida la distorsión por movimiento (motion blur) emulando el «scan-out» de los monitores CRT a costa de sacrificar brillo."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
@@ -2044,7 +2048,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "Introduce uno o varios fotogramas adicionales del shader entre fotogramas. Permite que los shaders reproduzcan efectos a una velocidad de fotogramas superior a la del contenido. Debería ser el mismo valor que la frecuencia de hercios actual de la pantalla. No combinar con un intervalo de intercambio de VSync superior a 1, con inserción de fotogramas negros, con el retraso de fotogramas o con Sincronizar FPS al contenido."
+   "ADVERTENCIA: los parpadeos rápidos pueden provocar persistencia de la imagen («imágenes fantasma») en algunas pantallas. Utiliza esta opción bajo tu propia responsabilidad. // Simula de forma básica el escalonamiento de las líneas de barrido a lo largo de varios subfotogramas dividendo la pantalla en partes verticales y renderizando cada una de las mismas en función de los subfotogramas que existan."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
@@ -2120,7 +2124,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "Simula de forma básica el escalonamiento de las líneas de barrido a lo largo de varios subfotogramas dividendo la pantalla en partes verticales y renderizando cada una de las mismas en función de los subfotogramas que existan."
+   "ADVERTENCIA: los parpadeos rápidos pueden provocar persistencia de la imagen («imágenes fantasma») en algunas pantallas. Utiliza esta opción bajo tu propia responsabilidad. // Simula de forma básica el escalonamiento de las líneas de barrido a lo largo de varios subfotogramas dividendo la pantalla en partes verticales y renderizando cada una de las mismas en función de los subfotogramas que existan."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2547,7 +2551,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "Escala solo la altura o también la anchura. Los escalados irregulares se aplicarán a las imágenes en alta resolución."
+   "Escala la altura o la anchura. Los escalados irregulares se aplicarán solo a imágenes en alta resolución."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
@@ -4801,7 +4805,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "Hace un guardado rápido de forma automática al cerrar un contenido. RetroArch lo cargará automáticamente si la opción «Cargar guardado rápido automáticamente» está activada."
+   "Hace un guardado rápido de forma automática al cerrar un contenido. El guardado rápido se cargará automáticamente si la opción «Cargar guardado rápido automáticamente» está activada."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5951,7 +5955,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "Especifica el tamaño de la fuente de letra en puntos."
+   "Especifica el tamaño de la fuente en puntos. Cuando se utilicen los widgets, el tamaño solo se aplicará a las estadísticas en pantalla."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -13400,10 +13404,6 @@ MSG_HASH(
    "Detección automática"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "Carga automática de guardado rápido en"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "Funcionalidades"
    )
@@ -14484,6 +14484,10 @@ MSG_HASH(
    "Error al cerrar la bandeja de discos virtual."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "Carga automática de guardado rápido en"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "Error al cargar automáticamente el guardado rápido «%s»."
    )
@@ -14792,6 +14796,14 @@ MSG_HASH(
    "Se ha activado un truco. Los logros Hardcore han sido desactivados para esta sesión."
    )
 MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_CHANGED_BY_HOST,
+   "Logros Hardcore cambiados por el servidor."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_REQUIRES_NEWER_HOST,
+   "El servidor de juego en red necesita una actualización. Los logros Hardcore han sido desactivados para esta sesión."
+   )
+MSG_HASH(
    MSG_CHEEVOS_MASTERED_GAME,
    "Has dominado %s"
    )
@@ -14829,23 +14841,23 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_PAUSED_MANUAL_FRAME_DELAY,
-   "Modo «hardcore» pausado. No se permite ajustar manualmente el retraso en los fotogramas de vídeo."
+   "Modo Hardcore pausado. No se permite ajustar manualmente el retraso en los fotogramas de vídeo."
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_PAUSED_VSYNC_SWAP_INTERVAL,
-   "Modo «hardcore» pausado. No se permite un valor de intercambio de sincronía vertical superior a 1."
+   "Modo Hardcore pausado. No se permite un valor de intercambio de sincronía vertical superior a 1."
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_PAUSED_BLACK_FRAME_INSERTION,
-   "Modo «hardcore» pausado. No se permite insertar fotogramas negros."
+   "Modo Hardcore pausado. No se permite insertar fotogramas negros."
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_PAUSED_SETTING_NOT_ALLOWED,
-   "Modo «hardcore» pausado. Ajuste no permitido: %s=%s"
+   "Modo Hardcore pausado. Ajuste no permitido: %s=%s"
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_PAUSED_SYSTEM_NOT_FOR_CORE,
-   "Modo «hardcore» pausado. No puedes desbloquear logros «hardcore» de %s con %s"
+   "Modo Hardcore pausado. No puedes desbloquear logros Hardcore de %s con %s"
    )
 MSG_HASH(
    MSG_CHEEVOS_GAME_NOT_IDENTIFIED,

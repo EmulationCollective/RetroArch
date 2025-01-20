@@ -33,6 +33,7 @@
 #include <encodings/utf.h>
 #include <features/features_cpu.h>
 #include <array/rhmap.h>
+#include <retro_math.h>
 
 #ifdef HAVE_CONFIG_H
 #include "../../config.h"
@@ -48,21 +49,20 @@
 #include "../../gfx/gfx_thumbnail_path.h"
 #include "../../gfx/gfx_thumbnail.h"
 
-#include "../../core_info.h"
-#include "../../core.h"
-
-#include "../../input/input_osk.h"
-
-#include "../../file_path_special.h"
 #include "../../configuration.h"
-#include "../../audio/audio_driver.h"
-
+#include "../../content.h"
+#include "../../core_info.h"
+#include "../../file_path_special.h"
+#include "../../input/input_osk.h"
 #include "../../tasks/tasks_internal.h"
+
+#ifdef HAVE_AUDIOMIXER
+#include "../../audio/audio_driver.h"
+#endif
 
 #ifdef HAVE_CHEEVOS
 #include "../../cheevos/cheevos_menu.h"
 #endif
-#include "../../content.h"
 
 #define XMB_RIBBON_ROWS 64
 #define XMB_RIBBON_COLS 64
@@ -345,7 +345,7 @@ typedef struct xmb_handle
    video_font_raster_block_t raster_block2;
 
    size_t (*word_wrap)(
-         char *dst, size_t dst_size,
+         char *s, size_t len,
          const char *src, size_t src_len,
          int line_width, int wideglyph_width, unsigned max_lines);
 
@@ -453,6 +453,7 @@ typedef struct xmb_handle
 
    /* Favorites, History, Images, Music, Videos, user generated */
    bool is_playlist;
+   bool is_playlist_tab;
    bool is_playlist_information;
    bool is_db_manager_list;
    bool is_explore_list;
@@ -1150,7 +1151,7 @@ static char *xmb_path_dynamic_wallpaper(xmb_handle_t *xmb)
    path[0]                            = '\0';
 
    /* Do not update wallpaper in "Load Content" playlists and inside playlist items */
-   if (    (xmb->categories_selection_ptr == 0 && depth > 4)
+   if (    (xmb->categories_selection_ptr == XMB_SYSTEM_TAB_MAIN && depth > 4)
         || (xmb->categories_selection_ptr > xmb->system_tab_end && depth > 1))
    {
       if (string_is_empty(xmb->bg_file_path))
@@ -1168,12 +1169,7 @@ static char *xmb_path_dynamic_wallpaper(xmb_handle_t *xmb)
                dir_dynamic_wallpapers,
                xmb->title_name,
                sizeof(path));
-
-      path[  _len] = '.';
-      path[++_len] = 'p';
-      path[++_len] = 'n';
-      path[++_len] = 'g';
-      path[++_len] = '\0';
+      strlcpy(path + _len, ".png", sizeof(path) - _len);
    }
 
    if (!string_is_empty(path) && path_is_valid(path))
@@ -3007,6 +3003,8 @@ static void xmb_populate_entries(void *data,
          && !string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_INFORMATION))
          && !string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_RDB_ENTRY_DETAIL));
 
+   xmb->is_playlist_tab = !xmb->is_playlist && string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_PLAYLISTS_TAB));
+
    xmb->is_playlist_information =
             string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_INFORMATION))
          || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_RDB_ENTRY_DETAIL));
@@ -3044,31 +3042,29 @@ static void xmb_populate_entries(void *data,
 
    xmb->is_state_slot = string_to_unsigned(path) == MENU_ENUM_LABEL_STATE_SLOT;
 
+#if defined(HAVE_LIBRETRODB)
    /* Explore list */
    xmb->is_explore_list =
             string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_DEFERRED_EXPLORE_LIST))
          || string_is_equal(label, msg_hash_to_str(MENU_ENUM_LABEL_EXPLORE_TAB))
          || xmb_horizontal_type == MENU_EXPLORE_TAB;
 
-#if defined(HAVE_LIBRETRODB)
    if (xmb->is_explore_list)
    {
       menu_entry_t entry;
-
       MENU_ENTRY_INITIALIZE(entry);
-      entry.flags |= MENU_ENTRY_FLAG_LABEL_ENABLED
-                   | MENU_ENTRY_FLAG_RICH_LABEL_ENABLED;
+      entry.flags |= MENU_ENTRY_FLAG_LABEL_ENABLED;
       menu_entry_get(&entry, 0, 0, NULL, true);
 
       /* Quick Menu under Explore list must also be Quick Menu */
-      xmb->is_quick_menu |= (
-                string_is_equal(entry.label, "collection")
-            || (string_is_equal(entry.label, "resume_content")
-            ||  string_is_equal(entry.label, "state_slot"))
-         );
-
-      if (!menu_explore_is_content_list() || xmb->is_quick_menu)
+      if (     string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_RUN))
+            || string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_RESUME_CONTENT))
+            || string_is_equal(entry.label, msg_hash_to_str(MENU_ENUM_LABEL_STATE_SLOT))
+         )
+      {
+         xmb->is_quick_menu = true;
          xmb->is_explore_list = false;
+      }
       else if (!xmb->is_quick_menu && depth < xmb->old_depth)
          xmb->skip_thumbnail_reset = true;
 
@@ -4458,9 +4454,13 @@ static bool xmb_animation_line_ticker_smooth(gfx_animation_t *p_anim, gfx_animat
       size_t bottom_fade_line_index = bottom_fade_line_offset % (lines.size + 1);
       /* Is line valid? */
       if (top_fade_line_index < lines.size)
-         strlcpy(line_ticker->top_fade_str, lines.elems[top_fade_line_index].data, line_ticker->top_fade_str_len);
+         strlcpy(line_ticker->top_fade_str,
+               lines.elems[top_fade_line_index].data,
+               line_ticker->top_fade_str_len);
       if (bottom_fade_line_index < lines.size)
-         strlcpy(line_ticker->bottom_fade_str, lines.elems[bottom_fade_line_index].data, line_ticker->bottom_fade_str_len);
+         strlcpy(line_ticker->bottom_fade_str,
+               lines.elems[bottom_fade_line_index].data,
+               line_ticker->bottom_fade_str_len);
    }
 
    success                  = true;
@@ -4596,7 +4596,8 @@ static int xmb_draw_item(
    {
       char entry_path[PATH_MAX_LENGTH];
       strlcpy(entry_path, entry.path, sizeof(entry_path));
-      fill_pathname(entry_path, path_basename(entry_path), "", sizeof(entry_path));
+      fill_pathname(entry_path, path_basename(entry_path), "",
+            sizeof(entry_path));
       if (!string_is_empty(entry_path))
          strlcpy(entry.path, entry_path, sizeof(entry.path));
    }
@@ -5527,6 +5528,78 @@ static enum menu_action xmb_parse_menu_entry_action(
          }
          break;
       case MENU_ACTION_SCAN:
+         if (xmb->is_playlist_tab)
+         {
+            struct menu_state *menu_st = menu_state_get_ptr();
+            size_t selection_total     = menu_st->entries.list ? MENU_LIST_GET_SELECTION(menu_st->entries.list, 0)->size : 0;
+            size_t selection           = menu_st->selection_ptr;
+            size_t new_selection       = random_range(0, selection_total - 1);
+            menu_entry_t entry_new;
+
+            MENU_ENTRY_INITIALIZE(entry_new);
+            menu_entry_get(&entry_new, 0, new_selection, NULL, false);
+            /* Keep randomizing until selection is a fresh playlist */
+            while (new_selection == selection || entry_new.type != FILE_TYPE_PLAYLIST_COLLECTION)
+            {
+               new_selection = random_range(0, selection_total - 1);
+               menu_entry_get(&entry_new, 0, new_selection, NULL, false);
+            }
+
+            if (new_selection != selection)
+            {
+               menu_st->selection_ptr = new_selection;
+               if (menu_st->driver_ctx->navigation_set)
+                  menu_st->driver_ctx->navigation_set(menu_st->userdata, true);
+            }
+
+            new_action = MENU_ACTION_NOOP;
+
+#ifdef HAVE_AUDIOMIXER
+            if (new_selection != selection)
+               audio_driver_mixer_play_scroll_sound(true);
+#endif
+         }
+         else if ((xmb->is_playlist)
+               || (xmb->is_explore_list))
+         {
+            size_t selection_start = 0;
+            size_t selection_total = menu_st->entries.list ? MENU_LIST_GET_SELECTION(menu_st->entries.list, 0)->size : 0;
+            size_t selection       = menu_st->selection_ptr;
+            size_t new_selection   = selection;
+
+            /* Skip header items (Search Name + Add Additional Filter + Save as View) */
+            if (xmb->is_explore_list)
+            {
+               menu_entry_t entry;
+               MENU_ENTRY_INITIALIZE(entry);
+               menu_entry_get(&entry, 0, 0, NULL, true);
+
+               if (entry.type == MENU_SETTINGS_LAST + 1)
+                  selection_start = 1;
+               else if (entry.type == FILE_TYPE_RDB)
+                  selection_start = 2;
+            }
+
+            new_selection = random_range(selection_start, selection_total - 1);
+
+            while (new_selection == selection && selection_start != selection_total - 1)
+               new_selection = random_range(selection_start, selection_total - 1);
+
+            if (new_selection != selection)
+            {
+               menu_st->selection_ptr = new_selection;
+               xmb_selection_pointer_changed(xmb, true);
+            }
+
+            new_action    = MENU_ACTION_NOOP;
+
+#ifdef HAVE_AUDIOMIXER
+            if (new_selection != selection)
+               audio_driver_mixer_play_scroll_sound(true);
+#endif
+            break;
+         }
+
          if (     xmb->fullscreen_thumbnails_available
                && !xmb->show_fullscreen_thumbnails
                && (  (xmb->is_state_slot)
@@ -5544,8 +5617,13 @@ static enum menu_action xmb_parse_menu_entry_action(
             xmb->want_fullscreen_thumbnails = false;
             new_action = MENU_ACTION_NOOP;
          }
-         else if (xmb->is_explore_list || xmb->is_quick_menu || xmb->is_db_manager_list)
+         break;
+      case MENU_ACTION_SEARCH:
+         /* Playlist thumbnail cycle */
+         if (     (xmb->show_fullscreen_thumbnails)
+               || ((xmb->is_quick_menu) && !menu_is_running_quick_menu()))
          {
+            xmb->skip_thumbnail_reset = false;
             action_switch_thumbnail(NULL, NULL, 0, 0);
             new_action = MENU_ACTION_NOOP;
          }
@@ -7258,7 +7336,9 @@ static void xmb_frame(void *data, video_frame_info_t *video_info)
 
    /* Use alternative title if available */
    strlcpy(title_truncated,
-         !string_is_empty(xmb->title_name_alt) ? xmb->title_name_alt : xmb->title_name,
+          !string_is_empty(xmb->title_name_alt)
+         ? xmb->title_name_alt
+         : xmb->title_name,
          sizeof(title_truncated));
 
    if (!vertical_fade_factor && selection > 1)

@@ -93,6 +93,9 @@ typedef struct menu_input_ctx_bind
 extern u32 __nx_applet_type;
 #endif
 
+/* Accelerated navigation buttons */
+#define NAVIGATION_BUTTONS 9
+
 struct key_desc key_descriptors[RARCH_MAX_KEYS] =
 {
    {RETROK_FIRST,         "Unmapped"},
@@ -458,9 +461,9 @@ void menu_entry_get(menu_entry_t *entry, size_t stack_idx,
             if (entry->enum_idx == MENU_ENUM_LABEL_CHEEVOS_PASSWORD)
             {
                size_t j;
-               size_t size = strlcpy(entry->password_value, entry->value,
+               size_t _len = strlcpy(entry->password_value, entry->value,
                      sizeof(entry->password_value));
-               for (j = 0; j < size; j++)
+               for (j = 0; j < _len; j++)
                   entry->password_value[j] = '*';
             }
          }
@@ -542,13 +545,13 @@ static menu_search_terms_t *menu_entries_search_get_terms_internal(void)
  * 'idx' to the matching list entry index. */
 bool menu_entries_list_search(const char *needle, size_t *idx)
 {
+   size_t i;
    struct menu_state *menu_st  = &menu_driver_state;
    menu_list_t *menu_list      = menu_st->entries.list;
    file_list_t *list           = MENU_LIST_GET_SELECTION(menu_list, (unsigned)0);
    bool match_found            = false;
    bool char_search            = false;
    char needle_char            = 0;
-   size_t i;
 
    if (   !list
        || string_is_empty(needle)
@@ -640,7 +643,8 @@ bool menu_entries_list_search(const char *needle, size_t *idx)
 /* Display the date and time - time_mode will influence how
  * the time representation will look like.
  * */
-size_t menu_display_timedate(gfx_display_ctx_datetime_t *datetime, char *s, size_t len)
+size_t menu_display_timedate(gfx_display_ctx_datetime_t *datetime,
+      char *s, size_t len)
 {
    /* Storage container for current menu datetime
     * representation string */
@@ -1014,7 +1018,8 @@ size_t menu_display_timedate(gfx_display_ctx_datetime_t *datetime, char *s, size
 }
 
 /* Display current (battery) power state */
-size_t menu_display_powerstate(gfx_display_ctx_powerstate_t *powerstate, char *s, size_t len)
+size_t menu_display_powerstate(gfx_display_ctx_powerstate_t *powerstate,
+      char *s, size_t len)
 {
    int percent                    = 0;
    struct menu_state    *menu_st  = &menu_driver_state;
@@ -1254,12 +1259,9 @@ static void menu_list_free_list(
    file_list_free(list);
 }
 
-static void menu_list_pop_stack(
-      const menu_ctx_driver_t *menu_driver_ctx,
-      void *menu_userdata,
-      menu_list_t *list,
-      size_t idx,
-      size_t *directory_ptr)
+static void menu_list_pop_stack(const menu_ctx_driver_t *menu_driver_ctx,
+      void *menu_userdata, menu_list_t *list,
+      size_t idx, size_t *directory_ptr)
 {
    file_list_t *menu_list = MENU_LIST_GET(list, (unsigned)idx);
 
@@ -1292,8 +1294,7 @@ static int menu_list_flush_stack_type(const char *needle, const char *label,
 
 static void menu_list_flush_stack(
       const menu_ctx_driver_t *menu_driver_ctx,
-      void *menu_userdata,
-      struct menu_state *menu_st,
+      void *menu_userdata, struct menu_state *menu_st,
       menu_list_t *list,
       size_t idx, const char *needle, unsigned final_type)
 {
@@ -1339,8 +1340,7 @@ static void menu_list_flush_stack(
    }
 }
 
-static void menu_list_free(
-      const menu_ctx_driver_t *menu_driver_ctx,
+static void menu_list_free(const menu_ctx_driver_t *menu_driver_ctx,
       menu_list_t *menu_list)
 {
    if (!menu_list)
@@ -1431,12 +1431,9 @@ error:
    return NULL;
 }
 
-static int menu_input_key_bind_set_mode_common(
-      struct menu_state *menu_st,
-      struct menu_bind_state *binds,
-      enum menu_input_binds_ctl_state state,
-      rarch_setting_t  *setting,
-      settings_t *settings)
+static int menu_input_key_bind_set_mode_common(struct menu_state *menu_st,
+      struct menu_bind_state *binds, enum menu_input_binds_ctl_state state,
+      rarch_setting_t  *setting, settings_t *settings)
 {
    switch (state)
    {
@@ -2985,16 +2982,12 @@ static bool menu_shader_manager_save_preset_internal(
          fill_pathname_join(buffer, target_dirs[i],
                fullname, sizeof(buffer));
 
-         strlcpy(basedir, buffer, sizeof(basedir));
-         path_basedir(basedir);
+         fill_pathname_basedir(basedir, buffer, sizeof(basedir));
 
-         if (!path_is_directory(basedir))
+         if (!path_is_directory(basedir) && !(ret = path_mkdir(basedir)))
          {
-            if (!(ret = path_mkdir(basedir)))
-            {
-               RARCH_WARN("[Shaders]: Failed to create preset directory \"%s\".\n", basedir);
-               continue;
-            }
+            RARCH_WARN("[Shaders]: Failed to create preset directory \"%s\".\n", basedir);
+            continue;
          }
 
          preset_path = buffer;
@@ -3183,6 +3176,7 @@ static bool menu_shader_manager_operate_auto_preset(
                {
                   if (!(BIT32_GET(flags.flags, shader_types_flags[j])))
                      continue;
+
                   strlcpy(end, video_shader_get_preset_extension(shader_types[j]),
                         sizeof(preset_path) - (end - preset_path));
 
@@ -3227,7 +3221,7 @@ static bool menu_shader_manager_operate_auto_preset(
 
                for (j = 0; j < ARRAY_SIZE(shader_types); j++)
                {
-                  if (!(BIT32_GET(flags.flags, shader_types[j])))
+                  if (!(BIT32_GET(flags.flags, shader_types_flags[j])))
                      continue;
 
                   strlcpy(end, video_shader_get_preset_extension(shader_types[j]),
@@ -4068,8 +4062,7 @@ static size_t menu_driver_get_current_menu_label(struct menu_state *menu_st,
 #endif
 
 static size_t menu_driver_get_current_menu_sublabel(
-      struct menu_state *menu_st,
-      char *s, size_t len)
+      struct menu_state *menu_st, char *s, size_t len)
 {
    menu_entry_t     entry;
    MENU_ENTRY_INITIALIZE(entry);
@@ -5250,7 +5243,7 @@ unsigned menu_event(
    unsigned ok_trigger                             = ok_current & ~ok_old;
    static unsigned navigation_initial              = 0;
    unsigned navigation_current                     = 0;
-   unsigned navigation_buttons[8]                  =
+   unsigned navigation_buttons[NAVIGATION_BUTTONS] =
    {
       RETRO_DEVICE_ID_JOYPAD_UP,
       RETRO_DEVICE_ID_JOYPAD_DOWN,
@@ -5259,7 +5252,8 @@ unsigned menu_event(
       RETRO_DEVICE_ID_JOYPAD_L,
       RETRO_DEVICE_ID_JOYPAD_R,
       RETRO_DEVICE_ID_JOYPAD_L2,
-      RETRO_DEVICE_ID_JOYPAD_R2
+      RETRO_DEVICE_ID_JOYPAD_R2,
+      RETRO_DEVICE_ID_JOYPAD_Y
    };
 
    ok_old                                          = ok_current;
@@ -5384,7 +5378,7 @@ unsigned menu_event(
    }
 
    /* Accelerate only navigation buttons */
-   for (i = 0; i < 6; i++)
+   for (i = 0; i < NAVIGATION_BUTTONS; i++)
    {
       if (BIT256_GET_PTR(p_input, navigation_buttons[i]))
          navigation_current        |= (1 << navigation_buttons[i]);
@@ -5416,7 +5410,7 @@ unsigned menu_event(
       if (delay_count >= delay_timer)
       {
          uint32_t input_repeat      = 0;
-         for (i = 0; i < 6; i++)
+         for (i = 0; i < NAVIGATION_BUTTONS; i++)
             BIT32_SET(input_repeat, navigation_buttons[i]);
 
          p_trigger_input->data[0]  |= p_input->data[0] & input_repeat;

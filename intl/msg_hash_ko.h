@@ -915,6 +915,10 @@ MSG_HASH(
    "Video4Linux2 지원"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "SSL 지원"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
    "Libusb 지원"
    )
@@ -1980,7 +1984,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "프레임 사이에 검정색 프레임을 삽입합니다. CRT 스캔을 에뮬레이션하여 모션 블러를 크게 줄일 수 있지만 밝기는 저하됩니다. 스왑 간격 > 1, 서브프레임, 프레임 지연, 정확한 프레임 동기화 설정들과 함께 사용하지 마십시오."
+   "주의: 빠른 깜빡임은 일부 디스플레이에 잔상을 남길 수 있습니다. 사용에 주의가 필요합니다 // 프레임 사이에 검은 프레임을 삽입합니다. CRT 스캔을 흉내내어 모션 블러를 크게 줄일 수 있지만, 화면 밝기가 저하됩니다."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
@@ -2064,7 +2068,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "프레임 사이에 추가 셰이더 프레임을 삽입합니다. 셰이더가 콘텐츠의 프레임 레이트보다 더 높은 프레임 레이트로 작업을 수행할 수 있게 합니다. 현재 디스플레이의 주사율 Hz와 일치하는 값으로 설정되어야 합니다. 스왑 간격 > 1, 검정색 프레임 삽입, 정확한 프레임 동기화 설정들과 함께 사용하지 마십시오."
+   "주의: 빠른 깜빡임은 일부 디스플레이에 잔상을 남길 수 있습니다. 사용에 주의가 필요합니다 // 화면을 여러 세로 구간으로 나누고 다수의 서브프레임으로부터 각 구간에 해당하는 서브프레임을 렌더하는 방식으로 롤링 스캔라인 효과를 흉내냅니다."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
@@ -2140,7 +2144,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "화면을 여러 세로 구간으로 나누고 다수의 서브프레임으로부터 각 구간에 해당하는 서브프레임을 렌더하는 방식으로 롤링 스캔라인 효과를 흉내냅니다."
+   "주의: 빠른 깜빡임은 일부 디스플레이에 잔상을 남길 수 있습니다. 사용에 주의가 필요합니다 // 화면을 여러 세로 구간으로 나누고 다수의 서브프레임으로부터 각 구간에 해당하는 서브프레임을 렌더하는 방식으로 롤링 스캔라인 효과를 흉내냅니다."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2567,7 +2571,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "화면 크기를 조정할 때 기준을 높이로 할지, 높이와 너비 모두로 할지 설정합니다. 고해상도 영상에는 절반 단위 조정도 적용됩니다."
+   "화면 크기를 조정할 때 기준을 높이로 할지, 너비로 할지, 높이와 너비 모두로 할지 설정합니다. 절반 단위 조정은 고해상도 영상에만 적용됩니다."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
@@ -4837,7 +4841,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "콘텐츠가 종료되면 자동으로 상태저장 파일을 생성합니다. 자동 상태 불러오기가 활성화 되어 있으면 다음 시작시 해당 상태저장을 자동으로 불러옵니다."
+   "컨텐츠를 종료할 때 자동으로 상태저장을 생성합니다. '상태저장 자동으로 불러오기'가 활성화되어 있는 경우, 이 상태저장을 다음 시작 시에 자동으로 불러옵니다."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5397,6 +5401,14 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_OVERLAY_ABXY_DIAGONAL_SENSITIVITY,
    "전면 버튼이 겹치는 부분의 크기를 조절합니다. 100%로 설정하면 8방향 구역의 크기가 모두 같아집니다."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_INPUT_OVERLAY_ANALOG_RECENTER_ZONE,
+   "아날로그 중심점 재정의 구역 범위"
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_INPUT_OVERLAY_ANALOG_RECENTER_ZONE,
+   "지정한 구역 내에서 터치를 시작할 경우 처음 터치한 위치를 아날로그 스틱 입력의 중심점으로 사용합니다."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_OVERLAY,
@@ -5987,7 +5999,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "포인트 단위로 폰트 크기를 설정합니다."
+   "폰트 크기(포인트)를 지정합니다. 위젯을 사용하는 경우, 이 크기 설정은 온스크린 통계 표시에만 적용됩니다."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -13488,10 +13500,6 @@ MSG_HASH(
    "자동감지"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "상태저장 자동 불러오기: "
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "기능"
    )
@@ -14584,6 +14592,10 @@ MSG_HASH(
    "가상 디스크 트레이를 닫지 못했습니다."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "상태저장 자동 불러오기: "
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "\"%s\"에서 상태저장을 자동으로 불러오지 못했습니다."
    )
@@ -14885,11 +14897,19 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_MODE_DISABLED,
-   "상태저장을 불러왔습니다. 현재 세션의 하드코어 모드 도전과제는 해제됩니다."
+   "상태저장을 불러왔습니다. 도전과제 하드코어 모드가 현재 세션에서 비활성화되었습니다."
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_MODE_DISABLED_CHEAT,
-   "치트가 활성화 되었습니다. 현재 세션의 하드코어 모드 도전과제는 해제됩니다."
+   "치트가 활성화되었습니다. 도전과제 하드코어 모드가 현재 세션에서 비활성화되었습니다."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_CHANGED_BY_HOST,
+   "호스트가 도전과제 하드코어 모드를 변경했습니다."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_REQUIRES_NEWER_HOST,
+   "넷플레이 호스트가 오래된 버전을 사용 중입니다. 도전과제 하드코어 모드가 현재 세션에서 비활성화되었습니다."
    )
 MSG_HASH(
    MSG_CHEEVOS_MASTERED_GAME,
@@ -14901,7 +14921,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_MODE_ENABLE,
-   "하드코어 모드 사용 중에는 상태저장 및 뒤로 감기 기능을 이용할 수 없습니다."
+   "도전과제 하드코어 모드 사용 중에는 상태저장 및 뒤로 감기 기능을 이용할 수 없습니다."
    )
 MSG_HASH(
    MSG_CHEEVOS_GAME_HAS_NO_ACHIEVEMENTS,

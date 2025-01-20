@@ -50,7 +50,7 @@ static int file_archive_get_file_list_cb(
       struct archive_extract_userdata *userdata)
 {
    union string_list_elem_attr attr;
-   attr.i = 0;
+   attr.i = RARCH_COMPRESSED_FILE_IN_ARCHIVE;
 
    if (valid_exts)
    {
@@ -80,8 +80,6 @@ static int file_archive_get_file_list_cb(
             string_list_deinitialize(&ext_list);
             return -1;
          }
-
-         attr.i = RARCH_COMPRESSED_FILE_IN_ARCHIVE;
       }
 
       string_list_deinitialize(&ext_list);
@@ -528,7 +526,7 @@ error:
  */
 int file_archive_compressed_read(
       const char * path, void **buf,
-      const char* optional_filename, int64_t *length)
+      const char* optional_filename, int64_t *len)
 {
    const struct
       file_archive_file_backend *backend = NULL;
@@ -542,7 +540,7 @@ int file_archive_compressed_read(
     */
    if (optional_filename && path_is_valid(optional_filename))
    {
-      *length = 0;
+      *len = 0;
       return 1;
    }
 
@@ -557,17 +555,17 @@ int file_archive_compressed_read(
    {
       /* could not extract string and substring. */
       string_list_free(str_list);
-      *length = 0;
+      *len = 0;
       return 0;
    }
 
    backend = file_archive_get_file_backend(str_list->elems[0].data);
-   *length = backend->compressed_file_read(str_list->elems[0].data,
+   *len    = backend->compressed_file_read(str_list->elems[0].data,
          str_list->elems[1].data, buf, optional_filename);
 
    string_list_free(str_list);
 
-   if (*length != -1)
+   if (*len != -1)
       return 1;
 
    return 0;

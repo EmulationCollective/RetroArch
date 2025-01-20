@@ -891,6 +891,10 @@ MSG_HASH(
    "Video4Linux2-Unterstützung"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "SSL-Unterstützung"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
    "libusb-Unterstützung"
    )
@@ -1892,7 +1896,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "Fügt Schwarzbild(er) zwischen Frames ein. Kann Bewegungsunschärfe durch Emulation von CRT-Abtast-Ausgabe erheblich reduzieren, aber auf Kosten der Helligkeit. Nicht kombinieren mit Swap-Intervall > 1, Unterbilder, Bildverzögerung oder mit exakter Inhaltssignalfrequenz synchronisieren."
+   "WARNUNG: Schnelles Flackern kann auf manchen Bildschirmen zu einem Nachleuchten des Bildes führen. Verwendung auf eigene Gefahr // Schwarze(n) Rahmen zwischen den Bildern einfügen. Kann die Bewegungsunschärfe durch Emulation der CRT-Abtastung stark reduzieren, allerdings auf Kosten der Helligkeit."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
@@ -1976,7 +1980,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "Fügt zusätzlich Shader-Bild(er) zwischen Frames ein. Ermöglicht Shadern den Einsatz von Effekten, die mit einer höheren Bildrate ausgeführt werden als die tatsächliche Inhaltsrate. Sollte auf die aktuelle Bildschirm-Hz gesetzt werden. Nicht kombinieren mit Swap-Intervall > 1, Schwarzbilder, Bildverzögerung oder mit exakter Inhaltssignalfrequenz synchronisieren."
+   "WARNUNG: Schnelles Flackern kann auf manchen Bildschirmen zu einem Nachleuchten des Bildes führen. Verwendung auf eigene Gefahr // Simuliert eine einfache rollende Scanline über mehrere Unterbilder, indem der Bildschirm vertikal aufgeteilt wird und jeder Teil des Bildschirms entsprechend der Anzahl der Unterbilder dargestellt wird."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
@@ -2052,7 +2056,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "Simuliert eine einfache rollende Scanline über mehrere Unterbilder, indem der Bildschirm vertikal aufgeteilt wird und jeder Teil des Bildschirms entsprechend der Anzahl der Unterbilder dargestellt wird."
+   "WARNUNG: Schnelles Flackern kann auf manchen Bildschirmen zu einem Nachleuchten des Bildes führen. Verwendung auf eigene Gefahr // Simuliert eine einfache rollende Scanline über mehrere Unterbilder, indem der Bildschirm vertikal aufgeteilt wird und jeder Teil des Bildschirms entsprechend der Anzahl der Unterbilder dargestellt wird."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2471,7 +2475,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "Nur Höhe oder Höhe und Breite skalieren. Halbschritte beziehen sich auf die Auflösung der Quellen."
+   "Skaliert entweder Höhe oder Breite oder sowohl Höhe als auch Breite. Halbschritte gelten nur für hochauflösende Quellen."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
@@ -4453,7 +4457,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_CORE_INFO_SAVESTATE_BYPASS,
-   "Legt fest, ob Savestatefähigkeiten der Core Info ignoriert werden sollen, so dass mit verwandten Funktionen experimentiert werden kann (Run-Ahead, Zurückspulen usw)."
+   "Legt fest, ob Savestate-Fähigkeiten der Core-Info ignoriert werden sollen, so dass mit verwandten Funktionen experimentiert werden kann (Run-Ahead, Zurückspulen usw.)."
    )
 #ifndef HAVE_DYNAMIC
 MSG_HASH(
@@ -4697,7 +4701,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "Automatisch ein Savestate erstellen, wenn der Inhalt geschlossen wird. RetroArch lädt dieses Savestate automatisch, wenn 'Savestate automatisch laden' aktiviert ist."
+   "Beim Schließen des Inhalts automatisch einen Savestate erstellen. Dieser Savestate wird beim Start geladen, wenn „Savestate automatisch laden“ aktiviert ist."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5836,10 +5840,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_FONT_SIZE,
    "Benachrichtigungs-Schriftgröße"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "Die Schriftgröße in Punkten wählen."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -13060,10 +13060,6 @@ MSG_HASH(
    "Automatisch erkennen"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "Automatisches Laden des Speicherzustands aus"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "Fähigkeiten"
    )
@@ -14152,6 +14148,10 @@ MSG_HASH(
    "Virtuelles Laufwerk konnte nicht geschlossen werden."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "Automatisches Laden des Speicherzustands aus"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "Automatisches Laden des Savestates aus \"%s\" fehlgeschlagen."
    )
@@ -14458,6 +14458,14 @@ MSG_HASH(
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_MODE_DISABLED_CHEAT,
    "Ein Cheat wurde aktiviert. Errungenschaften-Hardcore-Modus wurde für die aktuelle Sitzung deaktiviert."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_CHANGED_BY_HOST,
+   "Hardcore-Modus für Errungenschaften von Host geändert."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_REQUIRES_NEWER_HOST,
+   "Netplay-Host muss aktualisiert werden. Hardcore-Modus für Errungenschaften wurde für aktuelle Sitzung deaktiviert."
    )
 MSG_HASH(
    MSG_CHEEVOS_MASTERED_GAME,
@@ -15399,7 +15407,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
-   "Text am unteren Bildschirm einblenden. Aktivieren, um Tastenbeschreibungen auf dem unteren Bildschirm anzuzeigen. Dies schließt das Speicherdatum aus."
+   "Text am unteren Bildschirm einblenden. Aktivieren, um Schaltflächenbeschreibungen auf dem unteren Bildschirm anzuzeigen. Dies schließt das Savestate-Speicherdatum aus."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_RED,

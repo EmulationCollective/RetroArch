@@ -6212,6 +6212,9 @@ static void retroarch_print_features(void)
 #ifdef HAVE_NETWORKING
    _len += _PSUPP_BUF(buf, _len, SUPPORTS_NETPLAY,         "Netplay",         "Peer-to-peer netplay");
 #endif
+#ifdef HAVE_SSL
+   _len += _PSUPP_BUF(buf, _len, SUPPORTS_SSL,              "SSL",            "SSL Support");
+#endif
 #ifdef HAVE_LIBUSB
    _len += _PSUPP_BUF(buf, _len, SUPPORTS_LIBUSB,          "Libusb",          "Libusb support");
 #endif
@@ -6516,7 +6519,28 @@ static void retroarch_print_help(const char *arg0)
          "Path for the save state files (*.state). (DEPRECATED, use --appendconfig and savestate_directory)\n"
          , sizeof(buf) - _len);
 
+   /* Flush buffer here to avoid the error "error: string length ‘752’
+    * is greater than the length ‘509’ ISO C90 compilers are required
+    * to support" */
    fputs(buf, stdout);
+
+#if defined(__linux__) || defined(__GNU__) || (defined(BSD) && !defined(__MACH__))
+   buf[0] = '\0';
+   _len   = 0;
+   _len += strlcpy(buf + _len,
+         "\nThe following environment variables are supported:\n\n"
+         "  LIBRETRO_ASSETS_DIRECTORY\n"
+         "  LIBRETRO_AUTOCONFIG_DIRECTORY\n"
+         "  LIBRETRO_CHEATS_DIRECTORY\n"
+         "  LIBRETRO_DATABASE_DIRECTORY\n"
+         "  LIBRETRO_DIRECTORY\n"
+         "  LIBRETRO_SYSTEM_DIRECTORY\n"
+         "  LIBRETRO_VIDEO_FILTER_DIRECTORY\n"
+         "  LIBRETRO_VIDEO_SHADER_DIRECTORY\n\n"
+         "Refer to `man 6 retroarch' for a description of what they do.\n"
+         , sizeof(buf) - _len);
+   fputs(buf, stdout);
+#endif
 }
 
 #ifdef HAVE_DYNAMIC
@@ -6608,12 +6632,10 @@ static void retroarch_parse_input_libretro_path(
    else
    {
       size_t _len;
-      const char *slash     = strrchr(path, '/');
-      const char *backslash = strrchr(path, '\\');
       /* If path has no extension and contains no path
        * delimiters, check if it is a core 'name', matching
        * an existing file in the cores directory */
-      if (((!slash || (backslash > slash)) ? (char*)backslash : (char*)slash))
+      if (find_last_slash(path))
          goto end;
 
       /* First check for built-in cores */

@@ -907,6 +907,10 @@ MSG_HASH(
    "Prise en charge de Video4Linux2 "
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "Prise en charge de SSL "
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
    "Prise en charge de Libusb "
    )
@@ -1936,7 +1940,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "Insérer une ou plusieurs images noires entre les images. Peut considérablement réduire le flou de mouvement en émulant le balayage CRT, mais au détriment de la luminosité. Ne pas combiner avec les options Intervalle d'échange > 1, sous-trames, Retard d'images ou Synchroniser à la fréquence d'affichage exacte du contenu."
+   "AVERTISSEMENT : Un scintillement rapide peut causer une persistance de l'image sur certains écrans. À utiliser à vos risques et périls // Insérer des images noires entre les images. Permet de réduire considérablement le flou de mouvement en émulant le balayage CRT, mais au détriment de la luminosité."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
@@ -2020,7 +2024,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "Insérer une ou plusieurs images noires entre les images. Permet aux shaders de créer des effets qui tournent à une fréquence d'image plus élevée que la vitesse réelle du contenu. Doit être réglé sur les Hz de l'écran actuel. Ne pas combiner avec Intervalle d'échange > 1, BFI, Retard d'image ou Synchroniser à la fréquence d'affichage exacte du contenu."
+   "AVERTISSEMENT : Un scintillement rapide peut causer une persistance de l'image sur certains écrans. À utiliser à vos risques et périls // Simule une ligne de balayage roulante basique au cours de plusieurs sous-images en divisant l'écran verticalement et en rendant chaque partie de l'écran en fonction du nombre de sous-images disponibles."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
@@ -2096,7 +2100,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "Simule une ligne de balayage roulante basique au cours de plusieurs sous-images en divisant l'écran verticalement et en rendant chaque partie de l'écran en fonction du nombre de sous-images disponibles."
+   "AVERTISSEMENT : Un scintillement rapide peut causer une persistance de l'image sur certains écrans. À utiliser à vos risques et périls // Simule une ligne de balayage roulante basique au cours de plusieurs sous-images en divisant l'écran verticalement et en rendant chaque partie de l'écran en fonction du nombre de sous-images disponibles."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2523,7 +2527,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "Mettre à l'échelle la hauteur uniquement, ou la hauteur et la largeur. Les demi-étapes s'appliquent aux sources haute résolution."
+   "Mettre à l'échelle soit la hauteur ou la largeur, soit la hauteur et la largeur. Les demi-étapes s'appliquent uniquement aux sources haute résolution."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
@@ -4761,7 +4765,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "Créer automatiquement une sauvegarde instantanée à la fermeture de contenu. RetroArch chargera cette sauvegarde instantanée automatiquement si 'Chargement auto des sauvegardes instantanées' est activé."
+   "Faire automatiquement une sauvegarde instantanée lorsque le contenu est fermé. Cette sauvegarde instantanée est chargée au démarrage si l'option 'Chargement auto des sauvegardes instantanées' est activée."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5915,7 +5919,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "Spécifier la taille de la police en points."
+   "Spécifie la taille de la police en points. Lorsque des widgets sont utilisés, cette taille n'a d'effet que sur l'affichage des statistiques à l'écran."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -7130,7 +7134,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_CHEEVOS_HARDCORE_MODE_ENABLE,
-   "Désactive les cheats, le rembobinage, le ralenti et le chargement des sauvegardes instantanées. Les succès gagnés en mode hardcore sont marquées de façon unique pour que vous puissiez montrer aux autres ce que vous avez accompli sans fonctionnalités d'assistance d'émulateur. La désactivation de ce paramètre lors de l'exécution redémarrera le jeu."
+   "Désactive les cheats, le rembobinage, le ralenti et le chargement des sauvegardes instantanées. Les succès gagnés en mode Hardcore sont marquées de façon unique pour que vous puissiez montrer aux autres ce que vous avez accompli sans fonctionnalités d'assistance d'émulateur. La désactivation de ce paramètre lors de l'exécution redémarrera le jeu."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CHEEVOS_LEADERBOARDS_ENABLE,
@@ -13356,10 +13360,6 @@ MSG_HASH(
    "Détection automatique"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "Chargement auto d'une sauvegarde instantanée depuis"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "Capacités"
    )
@@ -14444,6 +14444,10 @@ MSG_HASH(
    "Impossible de fermer le plateau du lecteur de disque virtuel."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "Chargement auto d'une sauvegarde instantanée depuis"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "Le chargement d'une sauvegarde automatique depuis \"%s\" a échoué."
    )
@@ -14750,6 +14754,14 @@ MSG_HASH(
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_MODE_DISABLED_CHEAT,
    "Un cheat a été activé. Succès en mode Hardcore désactivés pour la session en cours."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_CHANGED_BY_HOST,
+   "Le mode Hardcore des succès a été modifié par l'hôte."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_REQUIRES_NEWER_HOST,
+   "L'hôte du jeu en réseau doit être mis à jour. Succès en mode Hardcore désactivés pour la session en cours."
    )
 MSG_HASH(
    MSG_CHEEVOS_MASTERED_GAME,

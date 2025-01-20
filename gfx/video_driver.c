@@ -198,18 +198,15 @@ struct aspect_ratio_elem aspectratio_lut[ASPECT_RATIO_END] = {
    { 4.0f / 3.0f  , ""              }  /* full -          initialized in video_driver_init_internal */
 };
 
-static INLINE bool realloc_checked(void **ptr, size_t size)
+static INLINE bool realloc_checked(void **ptr, size_t len)
 {
    void *nptr = NULL;
-
    if (*ptr)
-      nptr = realloc(*ptr, size);
+      nptr = realloc(*ptr, len);
    else
-      nptr = malloc(size);
-
+      nptr = malloc(len);
    if (nptr)
       *ptr = nptr;
-
    return *ptr == nptr;
 }
 
@@ -4673,7 +4670,9 @@ void video_frame_delay_auto(video_driver_state_t *video_st, video_frame_delay_au
    uint8_t count_pos              = 0;
    uint8_t count_min              = 0;
    uint8_t count_med              = 0;
+#if FRAME_DELAY_AUTO_DEBUG
    uint8_t count_max              = 0;
+#endif
    int8_t mode                    = 0;
 
    /* Calculate average frame time */
@@ -4702,8 +4701,10 @@ void video_frame_delay_auto(video_driver_state_t *video_st, video_frame_delay_au
             count_min++;
          if (frame_time_i > frame_time_limit_med)
             count_med++;
+#if FRAME_DELAY_AUTO_DEBUG
          if (frame_time_i > frame_time_limit_max)
             count_max++;
+#endif
       }
 
       frame_time_avg += frame_time_i;

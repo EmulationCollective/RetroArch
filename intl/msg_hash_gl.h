@@ -915,6 +915,10 @@ MSG_HASH(
    "Compatibilidade con Video4Linux2"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "Soporte SSL"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
    "Compatibilidade con libusb"
    )
@@ -1952,7 +1956,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "Insira cadro(s) negros entre cadros. Pode reducir moito o desenfoque de movemento emulando a exploración CRT, pero a costa do brillo. Non combine con Intervalo de intercambio > 1, sub-fotogramas, Retraso de fotogramas ou Sincronizar a velocidade de fotogramas de contido exacto."
+   "ADVERTENCIA: O destello rápido pode causar retención de imaxe en algunhas pantallas. Usa esta opción baixo a túa responsabilidade // Insire fotograma(s) en negro no medio dos fotogramas. Pode reducir notablemente o desenfoque de movemento emulando o funcionamento dunha pantalla de tubo á costa de perder brillo."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
@@ -2036,7 +2040,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "Insira marco(s) de sombreado extra entre cadros. Permite aos sombreadores facer efectos que se executan a un fps superior á taxa de contido real. Debe configurarse na pantalla actual Hz. Non combines con Intervalo de intercambio > 1, BFI, Retraso de fotogramas ou Sincronizar a velocidade de fotogramas de contido exacto."
+   "ADVERTENCIA: O destello rápido pode causar retención de imaxe en algunhas pantallas. Usa esta opción baixo a túa responsabilidade // Simula unha liña de exploración básica ó longo de varios subfotogramas dividindo a pantalla verticalmente e renderizando cada parte da pantalla segundo o número de subfotogramas."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
@@ -2112,7 +2116,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "Simula unha liña de escaneo en rotación básica sobre varios subfotogramas dividindo a pantalla verticalmente e representando cada parte da pantalla segundo cantos subfotogramas haxa."
+   "ADVERTENCIA: O destello rápido pode causar retención de imaxe en algunhas pantallas. Usa esta opción baixo a túa responsabilidade // Simula unha liña de exploración básica ó longo de varios subfotogramas dividindo a pantalla verticalmente e renderizando cada parte da pantalla segundo o número de subfotogramas."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2527,7 +2531,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "Escalar só a altura, ou tanto a altura como o ancho. Os pasos medios aplícanse a fontes de alta resolución."
+   "Cambia a escala da altura, ancho ou ambas. As fraccións aplícanse só ás fontes de alta resolución."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
@@ -3222,6 +3226,14 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_SUBLABEL_MIXER_ACTION_VOLUME,
    "Axusta o volume do fluxo de audio."
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_AUDIO_STREAM_STATE_NONE,
+   "Estado: N/D"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_AUDIO_STREAM_STATE_PLAYING_SEQUENTIAL,
+   "Estado: Reproducindo (en secuencia)"
    )
 
 /* Settings > Audio > Menu Sounds */
@@ -4497,7 +4509,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_CORE_INFO_SAVESTATE_BYPASS,
-   "Especifica se ignorar as capacidades de estado de salvamento da información básica, o que permite probar con funcións relacionadas (adiante, rebobinar, etc.)."
+   "Especifica se ignorar a información do núcleo respecto as capacidades de salvar estados, o que permite experimentar con funcionalidades relacionadas (adiantar execución, rebobinar, etc.)."
    )
 #ifndef HAVE_DYNAMIC
 MSG_HASH(
@@ -4741,7 +4753,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "Fai automaticamente un estado de gardado cando o contido estea pechado. RetroArch cargará automaticamente este estado de gardado se \"Cargar estado automaticamente\" está activado."
+   "Gardar o estado automaticamente cando se pecha o contido. Este estado gardado se carga no arranque se \"Auto Cargar Estado\" está activado."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5285,6 +5297,10 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_SUBLABEL_INPUT_OVERLAY_ABXY_DIAGONAL_SENSITIVITY,
    "Axusta o tamaño das zonas de superposición no rombo do botón da cara. Establécese ao 100 % para a simetría de 8 vías."
+   )
+MSG_HASH(
+   MENU_ENUM_SUBLABEL_INPUT_OVERLAY_ANALOG_RECENTER_ZONE,
+   "A entrada do stick analóxico será relativa ao primeiro toque cando se prema dentro desta zona."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_OVERLAY,
@@ -5860,10 +5876,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_FONT_SIZE,
    "Tamaño da notificación"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "Especifique o tamaño da fonte en puntos."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -13232,10 +13244,6 @@ MSG_HASH(
    "Detección automática"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "Cargando automaticamente o estado de gardar desde"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "Capacidades"
    )
@@ -14312,6 +14320,10 @@ MSG_HASH(
    "Produciuse un erro ao pechar a bandexa do disco virtual."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "Cargando automaticamente o estado de gardar desde"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "Fallou a carga automática do estado de gardado de \"%s\"."
    )
@@ -14618,6 +14630,14 @@ MSG_HASH(
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_MODE_DISABLED_CHEAT,
    "Activouse un truco. Logros Modo Hardcore desactivado para a sesión actual."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_CHANGED_BY_HOST,
+   "Modo Hardcore dos logros cambiado polo host."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_REQUIRES_NEWER_HOST,
+   "O host do Xogo en Rede tense que actualizar. Modo Hardcore dos logros desactivado para esta sesión."
    )
 MSG_HASH(
    MSG_CHEEVOS_MASTERED_GAME,
@@ -15531,7 +15551,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
-   "Mostra a fonte do menú inferior. Activar para mostrar as descricións dos botóns na pantalla inferior. Isto exclúe a data do estado de salvación."
+   "Mostrar a fonte do menú inferior. Cando se activa mostra descricións dos botóns na parte inferior da pantalla. Isto exclúe a data do estado gardado."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_RED,

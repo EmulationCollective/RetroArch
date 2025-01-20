@@ -899,6 +899,10 @@ MSG_HASH(
    "Supporto Video4Linux2"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "Supporto SSL"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
    "Supporto Libusb"
    )
@@ -1916,7 +1920,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "Inserisci fotogrammi neri tra fotogrammi. Puoi ridurre notevolmente la sfocatura del movimento emulando la scansione CRT, ma al costo della luminosità. Non combinare con Intervallo di scambio > 1, sottoframe, ritardo del frame o Sincronizza per ottenere un quadro di contenuto esatto."
+   "ATTENZIONE: lo sfarfallio rapido può causare persistenza delle immagini su alcuni display. Usare a proprio rischio // Inserire quadri neri tra i quadri. Può ridurre notevolmente la sfocatura del movimento emulando la scansione CRT, ma al costo della luminosità."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
@@ -2000,7 +2004,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "Inserisci fotogrammi shader aggiuntivi tra i quadri. Permette agli ombreggiatori di eseguire effetti con fps superiori al tasso di contenuto effettivo. Deve essere impostata alla schermata corrente Hz. Non combinare con Swap Intervallo > 1, BFI, Ritardo Frame o Sincronizzazione con Esact Content Framerate."
+   "ATTENZIONE: Il flickering rapido può causare persistenza delle immagini su alcuni display. Utilizzare a proprio rischio // Simula una linea di scanline di base su più sotto-frame dividendo lo schermo su verticalmente e rendendo ogni parte dello schermo in base a quanti sotto-frame ci sono."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
@@ -2076,7 +2080,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "Simula una linea di scanline di base su più sotto-frame dividendo lo schermo su verticalmente e rendendo ogni parte dello schermo in base a quanti sotto-frame ci sono."
+   "ATTENZIONE: Il flickering rapido può causare persistenza delle immagini su alcuni display. Utilizzare a proprio rischio // Simula una linea di scanline di base su più sotto-frame dividendo lo schermo su verticalmente e rendendo ogni parte dello schermo in base a quanti sotto-frame ci sono."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2503,7 +2507,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "Scala solo altezza, o entrambi altezza e larghezza. Metà passi si applicano alle sorgenti ad alta risoluzione."
+   "Scala altezza o larghezza, o entrambe altezza e larghezza. Mezzi passaggi si applicano solo alle sorgenti ad alta risoluzione."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
@@ -4485,7 +4489,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_CORE_INFO_SAVESTATE_BYPASS,
-   "Specifica se ignorare le funzionalità di salvataggio di stato delle informazioni di base, consentendo di sperimentare con le caratteristiche correlate (Run-Ahead, riavvolgi, ecc)."
+   "Specifica se ignorare le informazioni di base salvare le capacità di stato, consentendo di sperimentare con le caratteristiche correlate (eseguire avanti, riavvolgimento, ecc)."
    )
 #ifndef HAVE_DYNAMIC
 MSG_HASH(
@@ -4729,7 +4733,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "Crea automaticamente uno stato di salvataggio quando il contenuto è chiuso. RetroArch caricherà automaticamente questo stato di salvataggio se 'Carica automaticamente lo stato' è abilitato."
+   "Crea automaticamente uno stato di salvataggio quando il contenuto è chiuso. Questo stato di salvataggio viene caricato all'avvio se 'Stato di caricamento automatico' è abilitato."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5875,7 +5879,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "Specifica la dimensione del carattere in punti."
+   "Specifica la dimensione del carattere in punti. Quando i widget sono usati, questa dimensione ha effetto solo sul display delle statistiche sullo schermo."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -13204,10 +13208,6 @@ MSG_HASH(
    "Trovato automaticamente"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "Carica automaticamente il salvataggio da"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "Funzionalità"
    )
@@ -14296,6 +14296,10 @@ MSG_HASH(
    "Chiusura del vassoio del disco virtuale non riuscita."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "Carica automaticamente il salvataggio da"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "Caricamento automatico dello stato di salvataggio da \"%s\" non riuscito."
    )
@@ -14602,6 +14606,14 @@ MSG_HASH(
 MSG_HASH(
    MSG_CHEEVOS_HARDCORE_MODE_DISABLED_CHEAT,
    "Un trucco è stato attivato. Trofei della modalità Hardcore disabilitati per la sessione attuale."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_CHANGED_BY_HOST,
+   "Modalirà Obiettivi Hardcore cambiata dall'host."
+   )
+MSG_HASH(
+   MSG_CHEEVOS_HARDCORE_MODE_REQUIRES_NEWER_HOST,
+   "L'host Netplay deve essere aggiornato. La modalirà Obiettivi Hardcore disattivata per la sessione corrente."
    )
 MSG_HASH(
    MSG_CHEEVOS_MASTERED_GAME,
@@ -15539,7 +15551,7 @@ MSG_HASH(
    )
 MSG_HASH(
    MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
-   "Visualizza il carattere del menu inferiore. Abilita per visualizzare le descrizioni dei pulsanti nello schermo inferiore. Questo esclude la data di salvataggio."
+   "Visualizza il carattere del menu inferiore. Abilita per visualizzare le descrizioni dei pulsanti nella schermata inferiore. Questo esclude la data di salvataggio dello stato."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_RED,

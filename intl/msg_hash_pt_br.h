@@ -807,6 +807,10 @@ MSG_HASH(
    "Suporte ao PulseAudio"
    )
 MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_PIPEWIRE_SUPPORT,
+   "Suporte ao PipeWire"
+   )
+MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_COREAUDIO_SUPPORT,
    "Suporte ao CoreAudio"
    )
@@ -885,6 +889,10 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_V4L2_SUPPORT,
    "Suporte ao Video4Linux2"
+   )
+MSG_HASH(
+   MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_SSL_SUPPORT,
+   "Suporte ao SSL"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SYSTEM_INFO_LIBUSB_SUPPORT,
@@ -1973,10 +1981,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCAN_SUBFRAMES,
    "Simulação do rolamento da linha de varredura"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "Simula o rolamento básico da linha de varredura em múltiplos sub-quadros, dividindo a tela verticalmente e renderizando cada parte conforme a quantidade de sub-quadros existente."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -4072,10 +4076,6 @@ MSG_HASH(
    "Salvar jogo automaticamente"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "Cria automaticamente um jogo salvo quando o conteúdo for fechado. O RetroArch carregará automaticamente este jogo salvo se \"Carregue automaticamente o jogo salvo\" estiver ativado."
-   )
-MSG_HASH(
    MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_LOAD,
    "Carrega o último jogo salvo automaticamente na inicialização do RetroArch."
    )
@@ -4976,10 +4976,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_FONT_SIZE,
    "Tamanho da notificações na tela"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "Especifique o tamanho da fonte em pontos."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -11632,10 +11628,6 @@ MSG_HASH(
    "Detectar automaticamente"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "Autocarregando jogo salvo de"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "Capacidades"
    )
@@ -12620,6 +12612,10 @@ MSG_HASH(
    "Houve uma falha ao fechar a bandeja virtual do disco."
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "Autocarregando jogo salvo de"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "O carregamento automático do jogo salvo a partir de \"%s\" falhou."
    )
@@ -13576,10 +13572,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_ENABLE,
    "Ativar fonte"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
-   "Mostra a fonte do menu inferior. Ative para exibir as descrições dos botões na tela inferior. Não tem compatibilidade com a data do jogo salvo."
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_RED,

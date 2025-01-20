@@ -1923,10 +1923,6 @@ MSG_HASH(
    "插入黑幀"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "在每幀之間插入黑幀, 以降低亮度為代價, 透過模擬映像管螢幕掃描方式減少動態模糊。\n請勿與「垂直同步切換間隔」設定大於<1> 「著色器補幀」 「幀數延遲」 「準確同步執行幀率」同時使用。"
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
    "設定值必須與螢幕預設更新率相同, 在每幀之間插入黑幀以增強動態清晰度。\n請勿與「垂直同步切換間隔」設定大於<1> 「著色器補幀」 「幀數延遲」 「準確同步執行幀率」同時使用。\n不適用於非60Hz倍數的更新率, 例如144Hz、165Hz等。\n允許系統可變更新率開啟, 但不是那個設定。\n 如果發現任何影像殘留, 請在120hz測試後關閉此選項, 至於更高的更新率可調整下方暗幀設定。"
    )
@@ -1997,10 +1993,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SHADER_SUBFRAMES,
    "著色器補幀"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "設定值必須與螢幕預設更新率相同, 在每幀之間插入著色器補幀, 提高每秒顯示影格數符合螢幕更新率。\n請勿與「垂直同步切換間隔」設定大於<1> 「插入黑幀」 「幀數延遲」 「準確同步執行幀率」同時使用。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
@@ -2488,10 +2480,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_AXIS,
    "整數縮放方式"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "設定可以使用高度或同時使用高度和寬度, 高度加半高或寬度加半寬適用於高解析度。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING,
@@ -4423,10 +4411,6 @@ MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_SAVESTATE_BYPASS,
    "忽略其他支援"
    )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_CORE_INFO_SAVESTATE_BYPASS,
-   "開啟時執行核心忽略儲存狀態功能, 可用於開啟倒帶、超前執行和搶占幀數等相關功能。"
-   )
 #ifndef HAVE_DYNAMIC
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_ALWAYS_RELOAD_CORE_ON_RUN_CONTENT,
@@ -4666,10 +4650,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_SAVE,
    "自動儲存即時存檔"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "「關閉」和「結束復古電玩」時, 自動儲存即時存檔, 儲存的編號為自動(.state.auto)。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5732,10 +5712,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_FONT_SIZE,
    "設定字體大小"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "設定通知訊息使用的字體大小(點值)。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -13372,10 +13348,6 @@ MSG_HASH(
    "自動偵測"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "自動載入即時存檔從"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "容量"
    )
@@ -14460,6 +14432,10 @@ MSG_HASH(
    "虛擬光碟機托盤無法進入。"
    )
 MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "自動載入即時存檔從"
+   )
+MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
    "無法自動載入即時存檔, 位置: %s。"
    )
@@ -15520,10 +15496,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_ENABLE,
    "顯示文字"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
-   "在下螢幕上顯示按鍵說明, 不包括儲存即時存檔的日期。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_RED,

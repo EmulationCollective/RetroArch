@@ -1943,10 +1943,6 @@ MSG_HASH(
    "黑帧补间"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_BLACK_FRAME_INSERTION,
-   "在帧之间插入黑帧。可以通过仿真CRT扫描来大幅降低运动模糊，但以损失亮度为代价。 不要与 Swap Interval > 1, sub-frames, Frame Delay, 或者 Sync to Exact Content Framerate功能同时使用。"
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_BLACK_FRAME_INSERTION,
    "为增强运动清晰度在帧之间插入黑帧。仅使用为您当前显示刷新率指定的选项。 不以非倍数60赫兹的刷新速率使用，例如144赫兹，165赫兹等。 不要与Swap Interval > 1, sub-frames, Frame Delay, 或者 Sync to Exact Content Framerate功能同时使用. 可以打开系统的 VRR 选项，仅仅不是那个设置。 如果你注意到-任何-临时图像保留, 你应该在 120hz 处禁用, 对于更高的hz 则调整下面的暗色帧设置。"
    )
@@ -2027,10 +2023,6 @@ MSG_HASH(
    "着色器子帧"
    )
 MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SHADER_SUBFRAMES,
-   "在帧之间插入额外的着色器帧。允许着色器执行特效提升原生游戏的帧率。 应当设置为当前屏幕的刷新率。不要与“交换间隔 > 1”, “BFI”, “帧延迟”, 或“精确同步游戏帧率“功能同时使用。"
-   )
-MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SHADER_SUBFRAMES,
    "设计用来在任何可能的着色器特效上提升游戏本身的帧率，在帧之间插入额外的着色器帧。仅可以使用为您当前显示器刷新率指定的选项。 不要在非60赫兹倍数的屏幕刷新率使用，例如144赫兹，165赫兹等。 不要与“Swap 间隔 > 1”, “BFI”, “帧延迟”, 或者 “精确同步游戏帧率”功能同时使用. 可以保持系统的 VRR 功能打开，仅仅不是那个设置。"
    )
@@ -2101,10 +2093,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCAN_SUBFRAMES,
    "滚动扫描线模拟"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCAN_SUBFRAMES,
-   "在多个子帧上模拟基本的滚动扫描线，方法是垂直分割屏幕，并根据子帧的数量渲染屏幕的每个部分。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_HELP_VIDEO_SCAN_SUBFRAMES,
@@ -2528,10 +2516,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_AXIS,
    "整数缩放轴"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_SCALE_INTEGER_AXIS,
-   "仅缩放高度，或同时缩放高度和宽度。半步适用于高分辨率信号源。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_SCALE_INTEGER_SCALING_SMART,
@@ -4403,10 +4387,6 @@ MSG_HASH(
    MENU_ENUM_LABEL_VALUE_CORE_INFO_SAVESTATE_BYPASS,
    "绕过核心信息保存状态功能"
    )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_CORE_INFO_SAVESTATE_BYPASS,
-   "指定是否忽略核心信息保护功能，允许尝试相关的功能 (超前运行，回溯等)。"
-   )
 #ifndef HAVE_DYNAMIC
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_ALWAYS_RELOAD_CORE_ON_RUN_CONTENT,
@@ -4646,10 +4626,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_SAVE,
    "自动保存状态"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_SAVESTATE_AUTO_SAVE,
-   "关闭游戏时自动保存状态。如果启用了「自动加载状态」，下次打开游戏时，全能模拟器将自动加载此状态。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_SAVESTATE_AUTO_LOAD,
@@ -5796,10 +5772,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_FONT_SIZE,
    "通知大小"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_VIDEO_FONT_SIZE,
-   "设置字体大小磅数。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_VIDEO_MESSAGE_POS_X,
@@ -13252,10 +13224,6 @@ MSG_HASH(
    "自动检测"
    )
 MSG_HASH(
-   MSG_AUTOLOADING_SAVESTATE_FROM,
-   "自动加载状态存储于"
-   )
-MSG_HASH(
    MSG_CAPABILITIES,
    "容量"
    )
@@ -14350,6 +14318,10 @@ MSG_HASH(
 MSG_HASH(
    MSG_VIRTUAL_DISK_TRAY_CLOSE,
    "收回虚拟光驱托盘失败。"
+   )
+MSG_HASH(
+   MSG_AUTOLOADING_SAVESTATE_FROM,
+   "自动加载状态存储于"
    )
 MSG_HASH(
    MSG_AUTOLOADING_SAVESTATE_FAILED,
@@ -15568,10 +15540,6 @@ MSG_HASH(
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_ENABLE,
    "启用字体"
-   )
-MSG_HASH(
-   MENU_ENUM_SUBLABEL_BOTTOM_FONT_ENABLE,
-   "显示底部菜单字体。启用以在底部屏幕上显示按钮描述。这不包括保存日期。"
    )
 MSG_HASH(
    MENU_ENUM_LABEL_VALUE_BOTTOM_FONT_COLOR_RED,

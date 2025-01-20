@@ -16,7 +16,6 @@
  */
 
 #include <retro_miscellaneous.h>
-#include <retro_inline.h>
 
 #ifdef HAVE_CONFIG_H
 #include "../config.h"
@@ -43,38 +42,10 @@
 #include "../tasks/task_content.h"
 #include "../tasks/tasks_internal.h"
 
-#define BASE_FONT_SIZE 32.0f
-
+#define BASE_FONT_SIZE      32.0f
 #define MSG_QUEUE_FONT_SIZE 20.0f
 
-/* Icons */
-static const char
-*gfx_widgets_icons_names[MENU_WIDGETS_ICON_LAST]         = {
-   "menu_pause.png",
-   "menu_frameskip.png",
-   "menu_rewind.png",
-   "resume.png",
-
-   "menu_hourglass.png",
-   "menu_check.png",
-   "menu_add.png",
-   "menu_exit.png",
-
-   "menu_info.png",
-
-   "menu_achievements.png"
-};
-
 static dispgfx_widget_t dispwidget_st = {0}; /* uint64_t alignment */
-
-static void INLINE gfx_widgets_font_free(gfx_widget_font_data_t *font_data)
-{
-   if (font_data->font)
-      font_driver_free(font_data->font);
-
-   font_data->font        = NULL;
-   font_data->usage_count = 0;
-}
 
 /* Widgets list */
 const static gfx_widget_t* const widgets[] = {
@@ -1123,12 +1094,13 @@ static int gfx_widgets_draw_indicator(
    }
    else
    {
+      char txt[NAME_MAX_LENGTH];
       unsigned height       = p_dispwidget->simple_widget_height;
-      const char *txt       = msg_hash_to_str(msg);
+      size_t _len = strlcpy(txt, msg_hash_to_str(msg), sizeof(txt));
 
       width = font_driver_get_message_width(
             p_dispwidget->gfx_widget_fonts.regular.font,
-            txt, strlen(txt), 1.0f)
+            txt, _len, 1.0f)
          + p_dispwidget->simple_widget_padding * 2;
 
       gfx_display_draw_quad(
@@ -1513,19 +1485,6 @@ static void gfx_widgets_draw_regular_msg(
    }
 }
 
-static void INLINE gfx_widgets_font_bind(gfx_widget_font_data_t *font_data)
-{
-   font_driver_bind_block(font_data->font, &font_data->raster_block);
-   font_data->raster_block.carr.coords.vertices = 0;
-   font_data->usage_count                       = 0;
-}
-
-static void INLINE gfx_widgets_font_unbind(gfx_widget_font_data_t *font_data)
-{
-   font_driver_bind_block(font_data->font, NULL);
-}
-
-
 void gfx_widgets_frame(void *data)
 {
    size_t i;
@@ -1567,9 +1526,19 @@ void gfx_widgets_frame(void *data)
             video_st->data, video_width, video_height, true, false);
 
    /* Font setup */
-   gfx_widgets_font_bind(&p_dispwidget->gfx_widget_fonts.regular);
-   gfx_widgets_font_bind(&p_dispwidget->gfx_widget_fonts.bold);
-   gfx_widgets_font_bind(&p_dispwidget->gfx_widget_fonts.msg_queue);
+   font_driver_bind_block(p_dispwidget->gfx_widget_fonts.regular.font,
+         &p_dispwidget->gfx_widget_fonts.regular.raster_block);
+   font_driver_bind_block(p_dispwidget->gfx_widget_fonts.bold.font,
+         &p_dispwidget->gfx_widget_fonts.bold.raster_block);
+   font_driver_bind_block(p_dispwidget->gfx_widget_fonts.msg_queue.font,
+         &p_dispwidget->gfx_widget_fonts.msg_queue.raster_block);
+
+   p_dispwidget->gfx_widget_fonts.regular.raster_block.carr.coords.vertices   = 0;
+   p_dispwidget->gfx_widget_fonts.regular.usage_count                         = 0;
+   p_dispwidget->gfx_widget_fonts.bold.raster_block.carr.coords.vertices      = 0;
+   p_dispwidget->gfx_widget_fonts.bold.usage_count                            = 0;
+   p_dispwidget->gfx_widget_fonts.msg_queue.raster_block.carr.coords.vertices = 0;
+   p_dispwidget->gfx_widget_fonts.msg_queue.usage_count                       = 0;
 
 #ifdef HAVE_TRANSLATE
    /* AI Service overlay */
@@ -1668,7 +1637,7 @@ void gfx_widgets_frame(void *data)
    }
 #endif
 
-   /* Status Text (fps, framecount, memory, core status message) */
+   /* Status Text (FPS, framecount, memory, core status message) */
    if (     fps_show
          || framecount_show
          || memory_show
@@ -1834,9 +1803,9 @@ void gfx_widgets_frame(void *data)
          &p_dispwidget->gfx_widget_fonts.msg_queue);
 
    /* Unbind fonts */
-   gfx_widgets_font_unbind(&p_dispwidget->gfx_widget_fonts.regular);
-   gfx_widgets_font_unbind(&p_dispwidget->gfx_widget_fonts.bold);
-   gfx_widgets_font_unbind(&p_dispwidget->gfx_widget_fonts.msg_queue);
+   font_driver_bind_block(p_dispwidget->gfx_widget_fonts.regular.font, NULL);
+   font_driver_bind_block(p_dispwidget->gfx_widget_fonts.bold.font, NULL);
+   font_driver_bind_block(p_dispwidget->gfx_widget_fonts.msg_queue.font, NULL);
 
    if (video_st->current_video && video_st->current_video->set_viewport)
       video_st->current_video->set_viewport(
@@ -1937,6 +1906,23 @@ static void gfx_widgets_context_reset(
       unsigned width, unsigned height, bool fullscreen,
       const char *dir_assets, char *font_path)
 {
+   /* Icons */
+   static const char
+      *gfx_widgets_icons_names[MENU_WIDGETS_ICON_LAST]         = {
+         "menu_pause.png",
+         "menu_frameskip.png",
+         "menu_rewind.png",
+         "resume.png",
+
+         "menu_hourglass.png",
+         "menu_check.png",
+         "menu_add.png",
+         "menu_exit.png",
+
+         "menu_info.png",
+
+         "menu_achievements.png"
+      };
    size_t i;
 
    /* Load textures */
@@ -2110,6 +2096,15 @@ error:
    return false;
 }
 
+static void gfx_widgets_font_free(gfx_widget_font_data_t *font_data)
+{
+   if (font_data->font)
+      font_driver_free(font_data->font);
+
+   font_data->font        = NULL;
+   font_data->usage_count = 0;
+}
+
 static void gfx_widgets_context_destroy(dispgfx_widget_t *p_dispwidget)
 {
    size_t i;
@@ -2133,7 +2128,6 @@ static void gfx_widgets_context_destroy(dispgfx_widget_t *p_dispwidget)
    gfx_widgets_font_free(&p_dispwidget->gfx_widget_fonts.bold);
    gfx_widgets_font_free(&p_dispwidget->gfx_widget_fonts.msg_queue);
 }
-
 
 void gfx_widgets_deinit(bool widgets_persisting)
 {
